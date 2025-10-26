@@ -34,6 +34,27 @@ class OrdenDAO {
             throw new Error(`Error al agregar items a la orden: ${error.message}`)
         }
     }
+
+    async obtenerOrdenById (idOrden) {
+        try {
+            return await Orden.findOne({
+                _id: idOrden,
+                activo: true
+            })
+        } catch (error) {
+            throw new Error(`Error al obtener la orden: ${error.message}`)
+        }
+    }
+
+    async obtenerOrdenesByUsuario (idUsuario, limit = 10) {
+        try {
+            return await Orden
+                .find({idCliente: idUsuario, activo: true})
+                .limit(limit)
+        } catch (error) {
+            throw new Error(`Error al obtener orden: ${error.message}`)
+        }
+    }
 }
 
 export default new OrdenDAO()
