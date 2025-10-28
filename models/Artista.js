@@ -1,25 +1,30 @@
-
+/*
 import mongoose from 'mongoose'
 
 const artistaSchema = new mongoose.Schema({
     nombre: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
-    contacto: {
+    biografia: {
         type: String,
-        required: true
+        trim: true,
+        maxlength: 1000 // Limita la longitud por cualquier cosa
     },
-    // imagenes: [{
-    //     type: String,
-    //     required: true
-    // }],
-    activo: {
-        type: Boolean,
-        default: true
+    email: { // contacto
+        type: String,
+        required: true,
+        unique: true,
+        match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Por favor, usa un email válido']
+    },
+    redesSociales: { // para enlaces a redes
+        instagram: String,
+        spotify: String
     }
 }, {
     timestamps: true
 })
 
 export default mongoose.model('Artista', artistaSchema)
+*/
