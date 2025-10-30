@@ -1,4 +1,4 @@
-# Proyecto Web
+# Proyecto boletomaster
 
 ## Diseño y Mockup
 
