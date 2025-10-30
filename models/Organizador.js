@@ -1,4 +1,4 @@
-
+/*
 import mongoose from 'mongoose'
 
 const organizadorSchema = new mongoose.Schema({
@@ -19,3 +19,4 @@ const organizadorSchema = new mongoose.Schema({
 })
 
 export default mongoose.model('Organizador', organizadorSchema)
+*/

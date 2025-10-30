@@ -1,24 +1,35 @@
-
 import mongoose from 'mongoose'
+import { TIPO_ASIENTO } from '../constants/enums.js' 
 
 const boletoSchema = new mongoose.Schema({
+    // Referencia al ítem asociado con el boleto (ej. un producto, si aplica)
     idItem: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Item'
     },
+    
+    // Tipo o categoría del asiento (ej. VIP, General)
     tipoAsiento: {
         type: String,
-        required: true
+        required: true,
+        // Usamos el enum para asegurar que solo se ingresen valores válidos
+        // Object.values(TIPO_ASIENTO) obtiene un array de los valores del objeto
+        enum: Object.values(TIPO_ASIENTO) 
     },
-    idUsuario: {
+    
+    idUsuario: { // al que pertenece el bolteo
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Usuario'
     },
-    idEvento: {
+    
+    idEvento: { // del evento al que pertenece este boleto
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Evento'
+        ref: 'Evento',
+        required: true
     },
-    activo: {
+    
+    
+    activo: { // el boleto es válido/no ha sido usado
         type: Boolean,
         default: true
     },
@@ -27,4 +38,3 @@ const boletoSchema = new mongoose.Schema({
 })
 
 export default mongoose.model('Boleto', boletoSchema)
-
