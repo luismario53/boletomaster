@@ -1,0 +1,21 @@
+.main-header {
+    background-color: #F8D62C;
+    width: 100%;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    height: 60px;
+}
+
+.nav-menu a {
+    margin-left: 35px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #735DC9;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
