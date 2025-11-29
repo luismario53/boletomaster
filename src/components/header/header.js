@@ -11,12 +11,19 @@ export class HeaderComponent extends HTMLElement {
     }
 
     #render(shadow) {
+        const logoURL = new URL('/assets/logo.jpg', import.meta.url).href;
+        const homeURL = "../../pages/Principal/main.html";
+        const artistasURL = "../../pages/Artistas/artists.html";
+
+
         shadow.innerHTML += `
             <header class="main-header">
-                <img src="/assets/logo.jpg" alt="Logo" class="logo" />
+                <a href="${homeURL}" class="logo-link">
+                    <img src="${logoURL}" alt="Logo" class="logo" />
+                </a>
 
                 <nav class="nav-menu">
-                    <a href="#artistas">ARTISTAS</a>
+                    <a href="${artistasURL}">ARTISTAS</a>
                     <a href="#eventos">EVENTOS</a>
                     <a href="#galeria">GALERÍA</a>
                     <a href="#contacto">CONTACTO</a>

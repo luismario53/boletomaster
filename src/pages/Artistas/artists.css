@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0f0f10; /* Fondo general de la página */
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #735DC9;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    padding-bottom: 20px;
+}
+
+/* CORRECCIÓN: Usamos Flexbox igual que en tu Main.css */
+.artists-grid {
+    display: flex;
+    justify-content: center; /* Centradas horizontalmente */
+    gap: 30px; /* Misma separación que en lanzamientos */
+    flex-wrap: wrap; /* Para que bajen de línea si no caben */
+}
