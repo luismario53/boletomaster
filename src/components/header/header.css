@@ -1,6 +1,6 @@
 .main-header {
     background-color: #F8D62C;
-    width: 100%;
+    width: auto;
     padding: 15px 40px;
     display: flex;
     justify-content: space-between;
