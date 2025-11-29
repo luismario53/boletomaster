@@ -13,7 +13,7 @@ export class HeaderComponent extends HTMLElement {
     #render(shadow) {
         shadow.innerHTML += `
             <header class="main-header">
-                <img src="./src/assets/image 1.jpg" alt="Logo" class="logo" />
+                <img src="/assets/logo.jpg" alt="Logo" class="logo" />
 
                 <nav class="nav-menu">
                     <a href="#artistas">ARTISTAS</a>
@@ -28,7 +28,7 @@ export class HeaderComponent extends HTMLElement {
     #agregarEstilos(shadow) {
         const link = document.createElement("link");
         link.setAttribute("rel", "stylesheet");
-        link.setAttribute("href", "./src/components/header/header.css");
+        link.setAttribute("href", "/components/header/header.css");
         shadow.appendChild(link);
     };
 }
