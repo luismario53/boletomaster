@@ -1,14 +1,18 @@
 import { HeaderComponent } from "../../../components/header/header.js";
 import { FooterComponent } from "../../../components/footer/footer.js";
 import { CarouselComponent } from "../../../components/carousel/carousel.js";
-
 import { LanzamientoComponent } from "../../../components/lanzamientos/lanzamiento.js";
+
+// 1. IMPORTAR COMPONENTE DE MERCH
+import { MerchCardComponent } from "../../components/merch/merch-card.js";
 
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 window.customElements.define('carousel-info', CarouselComponent);
-
 window.customElements.define('lanzamiento-card', LanzamientoComponent);
+
+// 2. REGISTRAR COMPONENTE DE MERCH
+window.customElements.define('merch-card', MerchCardComponent);
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,10 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderizarPerfilArtista(id) {
-    // ============================================================
-    // DATOS HARDCODEADOS
-    // ============================================================
-
+    
     const mockDB = {
         "1": {
             nombre: "MEXTASIS",
@@ -41,7 +42,6 @@ function renderizarPerfilArtista(id) {
                     titulo: "Paranoia", 
                     artista: "Mextasis",
                     imagen: "/assets/lanzamientos/portada1.png",
-
                     spotify: "http://spotify.com...",
                     iconSpotify: "/assets/icons/icon_spotify.png",
                     youtube: "http://youtube.com...",
@@ -50,12 +50,21 @@ function renderizarPerfilArtista(id) {
                 { 
                     titulo: "Quebranto", 
                     artista: "Mextasis",
-
                     imagen: "/assets/lanzamientos/portada4.jpg",
                     spotify: "http://spotify.com...",
                     iconSpotify: "/assets/icons/icon_spotify.png",
                     youtube: "http://youtube.com...",
                     iconYoutube: "/assets/icons/icon_youtube.png"
+                }
+            ],
+
+            // 3. DATOS DE MERCH
+            merch: [
+                {
+                    _id: "m1", // ID para ir al perfil del producto
+                    nombre: "Camiseta Oficial",
+                    imagen: "/assets/merch/merch1.jpg",
+                    precio: "$350 MXN"
                 }
             ],
             
@@ -80,6 +89,7 @@ function renderizarPerfilArtista(id) {
         return;
     }
 
+    // --- RENDER HERO ---
     const heroSection = document.getElementById('hero-section');
     let redesHTML = '';
     datos.redes.forEach(red => {
@@ -96,15 +106,13 @@ function renderizarPerfilArtista(id) {
         </div>
     `;
 
+    // --- RENDER DISCOGRAFIA ---
     const discographyContainer = document.getElementById('discography-container');
-    
     datos.discografia.forEach(disco => {
         const card = document.createElement('lanzamiento-card');
-        
         card.setAttribute('titulo', disco.titulo);
         card.setAttribute('artista', disco.artista);
         card.setAttribute('imagen', disco.imagen);
-
         if(disco.spotify) {
             card.setAttribute('spotify-link', disco.spotify);
             card.setAttribute('icon-spotify', disco.iconSpotify);
@@ -113,18 +121,32 @@ function renderizarPerfilArtista(id) {
             card.setAttribute('youtube-link', disco.youtube);
             card.setAttribute('icon-youtube', disco.iconYoutube);
         }
-        if(disco.apple) {
-            card.setAttribute('apple-link', disco.apple);
-            card.setAttribute('icon-apple', disco.iconApple);
-        }
-
         discographyContainer.appendChild(card);
     });
 
+    // 4. RENDER MERCH (NUEVA LÓGICA)
+    const merchContainer = document.getElementById('merch-container');
+    if (datos.merch && datos.merch.length > 0) {
+        datos.merch.forEach(producto => {
+            const card = document.createElement('merch-card');
+            
+            card.setAttribute('id', producto._id);
+            card.setAttribute('nombre', producto.nombre);
+            card.setAttribute('imagen', producto.imagen);
+            card.setAttribute('precio', producto.precio);
+
+            merchContainer.appendChild(card);
+        });
+    } else {
+        merchContainer.innerHTML = '<p style="color:white; opacity:0.6;">Próximamente mercancía oficial.</p>';
+    }
+
+    // --- RENDER EVENTOS ---
     const eventsContainer = document.getElementById('events-container');
     const carousel = document.createElement('carousel-info');
     eventsContainer.appendChild(carousel);
 
+    // --- RENDER BIO ---
     const bioSection = document.getElementById('bio-section');
     bioSection.innerHTML = `
         <div class="bio-left-col">
