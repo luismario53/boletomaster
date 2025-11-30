@@ -26,7 +26,7 @@ class UsuarioDAO {
     async obtenerUsuarioPorId(idUsuario, incluirPassword = false) {
         try {
             const query = Usuario.findById(idUsuario)
-                .populate('idRol')
+                // .populate('idRol')
                 .populate('eventos')
                 .populate('ordenes')
 
@@ -48,7 +48,7 @@ class UsuarioDAO {
         try {
             const { filter = {}, limit, skip } = options
             const query = Usuario.find(filter)
-                .populate('idRol')
+                // .populate('idRol')
                 .sort({ createdAt: -1 })
 
             if (limit) query.limit(limit)
@@ -67,7 +67,7 @@ class UsuarioDAO {
      */
     async obtenerUsuariosPorFiltro(filter) {
         try {
-            return await Usuario.find(filter).populate('idRol')
+            return await Usuario.find(filter)
         } catch (error) {
             throw new Error(`DAO Error al obtener usuarios por filtro: ${error.message}`)
         }
@@ -127,7 +127,7 @@ class UsuarioDAO {
      */
     async obtenerUsuarioPorEmail(email, incluirPassword = false) {
         try {
-            const query = Usuario.findOne({ email }).populate('idRol')
+            const query = Usuario.findOne({ email })
             if (incluirPassword) query.select('+password')
             return await query.exec()
         } catch (error) {

@@ -33,13 +33,6 @@ const usuarioSchema = new mongoose.Schema({
         default: TIPO_USUARIO.CLIENTE
     },
 
-    // 🔸 Rol del usuario (para permisos granulares)
-    idRol: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Rol',
-        required: true
-    },
-
     // 🔸 Campos específicos para ARTISTA
     biografia: {
         type: String,
