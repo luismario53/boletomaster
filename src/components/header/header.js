@@ -14,6 +14,7 @@ export class HeaderComponent extends HTMLElement {
         const logoURL = new URL('/assets/logo.jpg', import.meta.url).href;
         const homeURL = "../../pages/Principal/main.html";
         const artistasURL = "../../pages/Artistas/artists.html";
+        const eventosURL = "../../pages/Eventos/events.html";
 
 
         shadow.innerHTML += `
@@ -24,7 +25,7 @@ export class HeaderComponent extends HTMLElement {
 
                 <nav class="nav-menu">
                     <a href="${artistasURL}">ARTISTAS</a>
-                    <a href="#eventos">EVENTOS</a>
+                    <a href="${eventosURL}">EVENTOS</a>
                     <a href="#galeria">GALERÍA</a>
                     <a href="#contacto">CONTACTO</a>
                 </nav>
