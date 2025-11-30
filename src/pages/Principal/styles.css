@@ -25,3 +25,8 @@ body {
     gap: 30px;
     flex-wrap: wrap;
 }
+
+.h2 {
+    color: white; 
+    margin-bottom: 30px;
+}
