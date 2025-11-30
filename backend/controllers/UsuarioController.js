@@ -3,7 +3,7 @@ import UsuarioDAO from '../dao/UsuarioDAO.js'
 class UsuarioController {
     async crear(req, res) {
         try {
-            const usuario = await UsuarioDAO.crear(req.body)
+            const usuario = await UsuarioDAO.crearUsuario(req.body)
             res.status(201).json(usuario)
         } catch (error) {
             res.status(400).json({ mensaje: 'Error al crear usuario', error: error.message })
@@ -12,7 +12,7 @@ class UsuarioController {
 
     async obtenerTodos(req, res) {
         try {
-            const usuarios = await UsuarioDAO.obtenerTodos()
+            const usuarios = await UsuarioDAO.obtenerTodosLosUsuarios()
             res.status(200).json(usuarios)
         } catch (error) {
             res.status(500).json({ mensaje: 'Error al obtener usuarios', error: error.message })
@@ -21,7 +21,7 @@ class UsuarioController {
 
     async obtenerPorId(req, res) {
         try {
-            const usuario = await UsuarioDAO.obtenerPorId(req.params.id)
+            const usuario = await UsuarioDAO.obtenerUsuarioPorId(req.params.id)
             if (!usuario) return next(new AppError('Usuario no encontrado', 404))
             res.status(200).json(usuario)
         } catch (error) {
@@ -31,7 +31,7 @@ class UsuarioController {
 
     async actualizar(req, res) {
         try {
-            const usuario = await UsuarioDAO.actualizar(req.params.id, req.body)
+            const usuario = await UsuarioDAO.actualizarUsuario(req.params.id, req.body)
             if (!usuario) return next(new AppError('Usuario no encontrado', 404))
             res.status(200).json(usuario)
         } catch (error) {
@@ -41,7 +41,7 @@ class UsuarioController {
 
     async eliminar(req, res) {
         try {
-            const usuario = await UsuarioDAO.eliminar(req.params.id)
+            const usuario = await UsuarioDAO.eliminarUsuario(req.params.id)
             if (!usuario) return next(new AppError('Usuario no encontrado', 404))
             res.status(200).json({ mensaje: 'Usuario eliminado correctamente' })
         } catch (error) {
