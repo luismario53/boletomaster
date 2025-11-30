@@ -56,3 +56,12 @@
     letter-spacing: 1px;
     color: white;
 }
+
+/* Agregar al inicio de artist-card.css */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+/* ... resto del CSS ... */
