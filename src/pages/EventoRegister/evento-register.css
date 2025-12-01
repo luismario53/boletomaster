@@ -1,0 +1,62 @@
+/* Heredamos estilos base de login.css */
+
+.wide-card {
+    max-width: 800px !important;
+}
+
+/* SECCIONES */
+.form-section {
+    margin-bottom: 30px;
+    background: rgba(255,255,255,0.02);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.form-section h3 {
+    color: #735DC9;
+    font-size: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* GRID SYSTEM */
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* TEXTAREA */
+textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #0f0f10;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #735DC9;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .grid-2-col {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .main-content {
+        padding: 20px 10px;
+    }
+}

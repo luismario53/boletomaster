@@ -223,10 +223,10 @@ body {
     transition: all 0.2s;
 }
 
-/* El último botón (Merch) que ocupe todo el ancho si queda solo */
+/* El último botón (Merch) que ocupe todo el ancho si queda solo
 .admin-btn:last-child:nth-child(odd) {
     grid-column: span 2;
-}
+}*/
 
 .admin-btn:hover {
     background-color: #735DC9;

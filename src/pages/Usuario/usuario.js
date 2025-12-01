@@ -38,6 +38,7 @@ function renderizarUsuario() {
         const artistaRegister = "/pages/ArtistaRegister/artista-register.html";
         const eventoRegister = "/pages/EventoRegister/evento-register.html";
         const merchRegister = "/pages/MerchRegister/merch-register.html";
+        const galeriaRegister = "/pages/GaleriaRegister/galeria-register.html";
 
         adminButtonsHTML = `
             <div class="admin-panel">
@@ -51,6 +52,9 @@ function renderizarUsuario() {
                     </a>
                     <a href="${merchRegister}" class="admin-btn">
                         <span></span> Nueva Merch
+                    </a>
+                    <a href="${galeriaRegister}" class="admin-btn">
+                        <span></span> Nuevo Album
                     </a>
                 </div>
             </div>
