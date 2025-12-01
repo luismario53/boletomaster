@@ -2,12 +2,7 @@ import mongoose from 'mongoose'
 import { TIPO_ASIENTO } from '../constants/enums.js' 
 
 const boletoSchema = new mongoose.Schema({
-    // Referencia al ítem asociado con el boleto (ej. un producto, si aplica)
-    idItem: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Item'
-    },
-    
+
     // Tipo o categoría del asiento (ej. VIP, General)
     tipoAsiento: {
         type: String,
@@ -27,8 +22,19 @@ const boletoSchema = new mongoose.Schema({
         ref: 'Evento',
         required: true
     },
-    
-    
+    precio: {
+        type: Number,
+        required: true
+    },
+    stock: {
+        type: Number,
+        required: true
+    },
+    moneda: {
+        type: String,
+        required: true,
+        maxLength: 10
+    },
     activo: { // el boleto es válido/no ha sido usado
         type: Boolean,
         default: true

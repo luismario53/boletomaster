@@ -1,93 +1,93 @@
-import EventoDAO from "../dao/EventoDAO.js";
+import ArtistaDAO from "../dao/ArtistaDAO.js";
 
-class EventoController {
+class ArtistaController {
 
-    async crearEvento(req, res) {
+    async crearArtista(req, res) {
         try {
-            const evento = req.body;
-            const nuevoEvento = await EventoDAO.insertarEvento(evento);
+            const artista = req.body;
+            const nuevoArtista = await ArtistaDAO.crearArtista(artista);
             res.status(201).json({
-                mensaje: "Evento creado correctamente",
-                evento: nuevoEvento
+                mensaje: "Aritsta creado correctamente",
+                artista: nuevoArtista
             });
         } catch (error) {
             res.status(500).json({
-                mensaje: "Error al crear el evento",
+                mensaje: "Error al crear el artista",
                 error: error.message
             });
         }
     }
 
-    async obtenerEventos(req, res) {
+    async obtenerArtistas(req, res) {
         try {
-            const eventos = await EventoDAO.obtenerEventos();
-            res.status(200).json(eventos);
+            const artistas = await ArtistaDAO.obtenerArtistas();
+            res.status(200).json(artistas);
         } catch (error) {
             res.status(500).json({
-                mensaje: "Error al obtener los eventos",
+                mensaje: "Error al obtener los artistas",
                 error: error.message
             });
         }
     }
 
-    async obtenerEventoPorId(req, res) {
+    async obtenerArtistaPorId(req, res) {
         try {
             const { id } = req.params;
-            const evento = await EventoDAO.obtenerEventoPorId(id);
+            const artista = await ArtistaDAO.obtenerArtistaById(id);
 
-            if (!evento) {
-                return res.status(404).json({ mensaje: "Evento no encontrado" });
+            if (!artista) {
+                return res.status(404).json({ mensaje: "Artista no encontrado" });
             }
 
-            res.status(200).json(evento);
+            res.status(200).json(artista);
         } catch (error) {
             res.status(500).json({
-                mensaje: "Error al obtener el evento",
+                mensaje: "Error al obtener el artista",
                 error: error.message
             });
         }
     }
 
-    async actualizarEvento(req, res) {
+    async actualizarArtista(req, res) {
         try {
             const { id } = req.params;
             const datosActualizados = req.body;
 
-            const eventoActualizado = await EventoDAO.actualizarEvento(id, datosActualizados);
+            const artistaActualizado = await ArtistaDAO.actualizarArtista(id, datosActualizados);
 
-            if (!eventoActualizado) {
-                return res.status(404).json({ mensaje: "Evento no encontrado" });
+            if (!artistaActualizado) {
+                return res.status(404).json({ mensaje: "Artista no encontrado" });
             }
 
             res.status(200).json({
-                mensaje: "Evento actualizado correctamente",
-                evento: eventoActualizado
+                mensaje: "Artista actualizado correctamente",
+                artista: artistaActualizado
             });
         } catch (error) {
             res.status(500).json({
-                mensaje: "Error al actualizar el evento",
+                mensaje: "Error al actualizar el artista",
                 error: error.message
             });
         }
     }
 
-    async eliminarEvento(req, res) {
+    async eliminarArtista(req, res) {
         try {
             const { id } = req.params;
-            const eliminado = await EventoDAO.eliminarEvento(id);
+            const eliminado = await ArtistaDAO.eliminarArtista(id);
 
             if (!eliminado) {
-                return res.status(404).json({ mensaje: "Evento no encontrado" });
+                return res.status(404).json({ mensaje: "Artista no encontrado" });
             }
 
-            res.status(200).json({ mensaje: "Evento eliminado correctamente" });
+            res.status(200).json({ mensaje: "Artista eliminado correctamente" });
         } catch (error) {
             res.status(500).json({
-                mensaje: "Error al eliminar el evento",
+                mensaje: "Error al eliminar el ertista",
                 error: error.message
             });
         }
     }
 }
 
-export default new EventoController();
+export default new ArtistaController();

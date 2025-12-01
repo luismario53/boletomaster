@@ -9,6 +9,8 @@ import { conectar } from './config/db.js'
 import './models/index.js'
 import eventoRouter from './routes/eventoRoutes.js'
 import usuariosRouter from './routes/usuarioRoutes.js'
+import mercanciaRouter from './routes/mercanciaRoutes.js'
+import authRouter from './routes/authRoutes.js'
 
 conectar()
 
@@ -31,8 +33,10 @@ app.post('/api/live', (req, res) => {
 
 app.use('/api/eventos/', eventoRouter)
 app.use('/api/usuarios/', usuariosRouter)
+app.use('/api/merch/', mercanciaRouter)
+app.use('/api/auth/', authRouter)
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{
     console.log(`El servidor esta corriendo en el puerto ${PORT}`)
 })

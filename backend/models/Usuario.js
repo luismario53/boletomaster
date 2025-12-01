@@ -43,6 +43,10 @@ const usuarioSchema = new mongoose.Schema({
         instagram: { type: String, trim: true },
         spotify: { type: String, trim: true }
     },
+    imagenes: {
+        perfil: { type: String, trim: true },
+        banner: { type: String, trim: true }
+    },
 
     // 🔸 Campos específicos para ORGANIZADOR
     contacto: {
@@ -50,11 +54,6 @@ const usuarioSchema = new mongoose.Schema({
         trim: true
     },
 
-    // 🔸 Eventos creados o gestionados (organizador o artista)
-    eventos: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Evento'
-    }],
 
     // 🔸 Órdenes o compras realizadas (clientes)
     ordenes: [{
@@ -67,7 +66,30 @@ const usuarioSchema = new mongoose.Schema({
         default: true
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }  
 })
+
+// Virtual para obtener la mercancía del artista
+usuarioSchema.virtual('eventos', {
+    ref: 'Evento',
+    localField: '_id',
+    foreignField: 'artistas',
+});
+
+// Virtual para obtener la mercancía del artista
+usuarioSchema.virtual('lanzamientos', {
+    ref: 'Lanzamiento',
+    localField: '_id',
+    foreignField: 'idArtista',
+});
+
+// Virtual para obtener la mercancía del artista
+usuarioSchema.virtual('merch', {
+    ref: 'Mercancia',
+    localField: '_id',
+    foreignField: 'idArtista',
+});
 
 export default mongoose.model('Usuario', usuarioSchema)

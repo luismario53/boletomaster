@@ -29,7 +29,7 @@ export class HeaderComponent extends HTMLElement {
         const merchRegister = "/pages/MerchRegister/merch-register.html"; 
 
         // --- LÓGICA DE SESIÓN ---
-        const usuarioSesion = localStorage.getItem('usuario_sonicolirio');
+        const usuarioSesion = localStorage.getItem('usuario');
         
         let authHTML = '';
 

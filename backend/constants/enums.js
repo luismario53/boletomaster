@@ -1,9 +1,9 @@
 // Enums para el modelo Usuario
 export const TIPO_USUARIO = {
-    CLIENTE: 'Cliente',
-    ORGANIZADOR: 'Organizador',
-    ADMIN: 'Administrador',
-    ARTISTA: 'Artista'
+    CLIENTE: 'CLIENTE',
+    ORGANIZADOR: 'ORGANIZADOR',
+    ADMIN: 'ADMINISTRADOR',
+    ARTISTA: 'ARTISTA'
 }
 
 // Enums para el modelo Boleto

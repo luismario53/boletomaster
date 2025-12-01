@@ -1,3 +1,4 @@
+import Boleto from '../models/Boleto.js';
 import Evento from '../models/Evento.js';
 import AppError from '../utils/AppError.js';
 
@@ -14,6 +15,7 @@ class EventoDAO {
      * @returns {Promise<object>} El documento del evento guardado.
      */
     async crearEvento(eventoData) {
+        // falta agregar token de sesion
         try {
             const evento = new Evento(eventoData);
             return await evento.save();

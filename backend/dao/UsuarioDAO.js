@@ -1,4 +1,5 @@
 import Usuario from '../models/Usuario.js'
+import bcrypt from 'bcryptjs'
 
 class UsuarioDAO {
     constructor() {}
@@ -10,6 +11,10 @@ class UsuarioDAO {
      */
     async crearUsuario(usuarioData) {
         try {
+            if (usuarioData.password) {
+                const salt = await bcrypt.genSalt(10)
+                usuarioData.password = await bcrypt.hash(usuarioData.password, salt)
+            }
             const usuario = new Usuario(usuarioData)
             return await usuario.save()
         } catch (error) {
@@ -26,8 +31,9 @@ class UsuarioDAO {
     async obtenerUsuarioPorId(idUsuario, incluirPassword = false) {
         try {
             const query = Usuario.findById(idUsuario)
-                // .populate('idRol')
+                .populate('merch')
                 .populate('eventos')
+                .populate('lanzamientos')
                 .populate('ordenes')
 
             if (incluirPassword) query.select('+password')
@@ -48,7 +54,6 @@ class UsuarioDAO {
         try {
             const { filter = {}, limit, skip } = options
             const query = Usuario.find(filter)
-                // .populate('idRol')
                 .sort({ createdAt: -1 })
 
             if (limit) query.limit(limit)
@@ -132,6 +137,46 @@ class UsuarioDAO {
             return await query.exec()
         } catch (error) {
             throw new Error(`DAO Error al obtener usuario por email: ${error.message}`)
+        }
+    }
+
+    /**
+     * @description Busca un usuario por email incluyendo el password (para login)
+     * @param {string} email - Email del usuario
+     * @returns {Promise<object|null>} Usuario encontrado o null
+     */
+    async buscarPorEmailConPassword(email) {
+        try {
+            return await Usuario.findOne({ email, activo: true }).select('+password')
+        } catch (error) {
+            throw new Error(`DAO Error al buscar usuario: ${error.message}`)
+        }
+    }
+
+    /**
+     * @description Valida el password del usuario
+     * @param {string} passwordIngresado - Password en texto plano
+     * @param {string} passwordHash - Password hasheado de la BD
+     * @returns {Promise<boolean>} true si coincide
+     */
+    async validarPassword(passwordIngresado, passwordHash) {
+        try {
+            return await bcrypt.compare(passwordIngresado, passwordHash)
+        } catch (error) {
+            throw new Error(`DAO Error al validar password: ${error.message}`)
+        }
+    }
+
+    /**
+     * @description Obtiene usuarios por tipo.
+     * @param {string} tipoUsuario - Tipo de usuario (artista, admin, cliente, etc.)
+     * @returns {Promise<Array<object>>} Lista de usuarios.
+     */
+    async obtenerUsuariosPorTipo(tipoUsuario) {
+        try {
+            return await Usuario.find({ tipoUsuario });
+        } catch (error) {
+            throw new Error(`DAO Error al obtener usuarios por tipo: ${error.message}`);
         }
     }
 }

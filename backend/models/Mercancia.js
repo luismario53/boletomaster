@@ -4,22 +4,48 @@ import mongoose from 'mongoose'
 const mercanciaSchema = new mongoose.Schema({
     idArtista: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Artista',
+        ref: 'Usuario',
         required: true
     },
-    idItem: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Item',
+    nombre: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 200
+    },
+    precio: {
+        type: Number,
         required: true
     },
     stock: {
         type: Number,
         required: true
     },
-    // imagen: {
-    //     type: String,
-    //     required: true
-    // },
+    moneda: {
+        type: String,
+        required: true,
+        maxLength: 10
+    },
+    descripcion: {
+        type: String,
+        trim: true,
+        maxlength: 1500
+    },
+    material: {
+        type: String,
+        trim: true,
+        maxlength: 500
+    },
+    imagenes: [{
+        type: String,
+        trim: true,
+        maxlength: 300
+    }],
+    tallas: [{
+        type: String,
+        trim: true,
+        maxlength: 5
+    }],
     activo: {
         type: Boolean,
         default: true

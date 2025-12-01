@@ -1,50 +1,73 @@
-import { HeaderComponent } from "../../components/header/header.js";
-import { FooterComponent } from "../../components/footer/footer.js";
+import { HeaderComponent } from "../../components/header/header.js"
+import { FooterComponent } from "../../components/footer/footer.js"
+import { fetchConAuth, protegerPagina, obtenerUsuario } from '../../utils/fetchConAuth.js'
 
-window.customElements.define('header-info', HeaderComponent);
-window.customElements.define('footer-info', FooterComponent);
+window.customElements.define('header-info', HeaderComponent)
+window.customElements.define('footer-info', FooterComponent)
 
+const TIPO_USUARIO = 'ARTISTA'
+
+protegerPagina()
 // CARGAR LISTA DE ARTISTAS PARA EL SELECTOR
 document.addEventListener('DOMContentLoaded', () => {
-    cargarArtistasEnSelector();
-});
+    cargarArtistasEnSelector()
+})
 
-function cargarArtistasEnSelector() {
-    // creo que esto vendria de fetch('/api/artistas')
-    const artistasDisponibles = [
-        { _id: "1", nombre: "MEXTASIS" },
-        { _id: "2", nombre: "EDUL" },
-        { _id: "3", nombre: "DISONANTE" },
-        { _id: "0", nombre: "SONICO LIRIO (OFICIAL)" }
-    ];
+async function cargarArtistasEnSelector() {
 
-    const selector = document.getElementById('artistaSelector');
+    try {
+        const response = await fetchConAuth(`/api/usuarios/tipo/${TIPO_USUARIO}`)
+        const data = await response.json()
 
-    artistasDisponibles.forEach(artista => {
-        const option = document.createElement('option');
-        option.value = artista._id; // Esto es lo que se guardarA en la BD
-        option.textContent = artista.nombre;
-        selector.appendChild(option);
-    });
+        if (!response.ok) {
+            console.error(data)
+            alert(data.error || data.message || "Ocurrió un error inesperado")
+            return
+        }
+
+        const selector = document.getElementById('artistaSelector')
+        selector.innerHTML = ''
+
+        // Agregar opción por defecto (placeholder)
+        const defaultOption = document.createElement('option')
+        defaultOption.value = ''
+        defaultOption.textContent = '-- Selecciona un artista --'
+        defaultOption.disabled = true
+        defaultOption.selected = true
+        selector.appendChild(defaultOption)
+
+        data.forEach(artista => {
+            const { _id, nombre } = artista
+            const option = document.createElement('option')
+            option.value = _id
+            option.textContent = nombre
+            selector.appendChild(option)
+        })
+
+    } catch (error) {
+        console.error("Error de conexión:", error)
+        alert("Error de conexión con el servidor")
+    }
+
 }
 
 document.getElementById('merch-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const btn = document.querySelector('.btn-auth');
-    btn.innerText = "GUARDANDO...";
-    btn.disabled = true;
+    const btn = document.querySelector('.btn-auth')
+    btn.innerText = "GUARDANDO..."
+    btn.disabled = true
 
-    const imagenesInputs = document.querySelectorAll('.img-input');
+    const imagenesInputs = document.querySelectorAll('.img-input')
     const imagenesArray = Array.from(imagenesInputs)
         .map(input => input.value.trim())
-        .filter(url => url !== "");
+        .filter(url => url !== "")
 
-    const tallasInputs = document.querySelectorAll('.talla-check:checked');
-    const tallasArray = Array.from(tallasInputs).map(cb => cb.value);
+    const tallasInputs = document.querySelectorAll('.talla-check:checked')
+    const tallasArray = Array.from(tallasInputs).map(cb => cb.value)
 
     const nuevoProducto = {
-        artistaId: document.getElementById('artistaSelector').value, 
+        idArtista: document.getElementById('artistaSelector').value, 
         
         nombre: document.getElementById('nombre').value,
         precio: Number(document.getElementById('precio').value),
@@ -57,19 +80,37 @@ document.getElementById('merch-form').addEventListener('submit', async (e) => {
         imagenes: imagenesArray,
 
         createdAt: new Date()
-    };
+    }
 
-    console.log("PRODUCTO CON VINCULACIÓN:", nuevoProducto);
+    console.log(nuevoProducto)
 
-    // ==========================================
-    // REQUEST FALSA MOCK
-    // ==========================================
-    
-    await new Promise(r => setTimeout(r, 1500)); 
+    try {
+        const response = await fetchConAuth("/api/merch", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(nuevoProducto),
+        })
 
-    alert(`¡Producto "${nuevoProducto.nombre}" registrado exitosamente!`);
-    
-    // tienda o perfil del artista
-    // window.location.href = `/pages/Artista/artist-profile.html?id=${nuevoProducto.artistaId}`;
-    window.location.href = "/pages/Artistas/artists.html";
-});
+        const data = await response.json()
+        console.log(data)
+
+        if (!response.ok) {
+            console.error(data)
+            alert(data.error || data.message || "Ocurrió un error inesperado")
+            btn.innerText = originalText
+            btn.disabled = false
+            return
+        }
+
+        alert(`Merch registrado correctamente!`)
+        window.location.href = "/pages/Usuario/usuario.html"
+
+    } catch (error) {
+        btn.innerText = originalText
+        btn.disabled = false
+        console.error("Error de conexión:", error)
+        alert("Error de conexión con el servidor")
+    }
+})
