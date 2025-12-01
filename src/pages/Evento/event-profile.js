@@ -4,7 +4,7 @@ import { FooterComponent } from "../../components/footer/footer.js";
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
-// Variable para rastrear la imagen actual
+// Variables globales para la galería
 let currentImageIndex = 0;
 let currentEventImages = [];
 
@@ -122,6 +122,27 @@ function renderizarEvento(id, container) {
             </div>
         </div>
     `;
+
+    // ==========================================
+    // 🔒 LÓGICA DE VALIDACIÓN DE SESIÓN (NUEVO)
+    // ==========================================
+    const buyBtn = container.querySelector('.btn-buy');
+    
+    buyBtn.addEventListener('click', () => {
+        const usuarioSesion = localStorage.getItem('usuario_sonicolirio');
+        
+        if (!usuarioSesion) {
+            const irALogin = confirm("🔒 Para comprar boletos necesitas iniciar sesión.\n\n¿Deseas ir a la página de inicio de sesión ahora?");
+            
+            if (irALogin) {
+                window.location.href = "/pages/Login/login.html";
+            }
+            return; 
+        }
+
+        // Si hay sesión, procedemos
+        alert(`✅ ¡Boletos para ${evento.titulo} agregados al carrito!`);
+    });
 }
 
 // ==========================================

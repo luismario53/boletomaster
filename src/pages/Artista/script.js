@@ -36,7 +36,7 @@ function renderizarPerfilArtista(id) {
                 { icon: "/assets/icons/icon_spotify.png", link: "https://open.spotify.com/intl-es/artist/42SJ61ThHGPtZC7RT9cWyA" },
                 { icon: "/assets/icons/icon_instagram.png", link: "https://www.instagram.com/mex_tasis/" }
             ],
-            
+
             discografia: [
                 { 
                     titulo: "Paranoia", 
