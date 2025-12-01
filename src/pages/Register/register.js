@@ -8,6 +8,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     e.preventDefault();
 
     const btn = document.querySelector('.btn-auth');
+    const originalText = btn.innerText
     btn.innerText = "REGISTRANDO...";
     btn.disabled = true;
 
@@ -25,16 +26,38 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
         createdAt: new Date()
     };
 
-    console.log("Enviando datos de NUEVO CLIENTE:", datos);
+    // console.log("Enviando datos de NUEVO CLIENTE:", datos);
+    console.log(datos)
 
-    // ==========================================
-    // 🚧 MOCK REGISTER (Simulación)
-    // ==========================================
-    
-    await new Promise(r => setTimeout(r, 1500)); // Simular espera de red
+    try {
+        const response = await fetch("/api/usuarios", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify(datos),
+        })
 
-    // Aquí iría: await fetch('/api/usuarios/registro', { method: 'POST', body: ... })
+        const data = await response.json()
 
-    alert(`¡Bienvenido, ${datos.nombre}! Tu cuenta ha sido creada.`);
-    window.location.href = "/pages/Login/login.html";
+        // ✅ Verificar si la respuesta fue exitosa
+        if (!response.ok) {
+            // El servidor devolvió 400, 401, 500, etc.
+            console.error("Ocurrió un error inesperado:", data)
+            alert(data.error || data.message || "Error al registrar usuario")
+
+            btn.innerText = originalText
+            btn.disabled = false
+            return
+        }
+
+        alert(`¡Bienvenido, ${datos.nombre}! Tu cuenta ha sido creada.`);
+        window.location.href = "/pages/Login/login.html"
+
+    } catch (error) {
+        btn.innerText = originalText
+        btn.disabled = false
+        console.error("Error de conexión:", error)
+        alert("Error de conexión con el servidor")
+    }
 });

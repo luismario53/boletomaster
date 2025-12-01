@@ -1,35 +1,36 @@
-import { HeaderComponent } from "../../../components/header/header.js";
-import { FooterComponent } from "../../../components/footer/footer.js";
-import { CarouselComponent } from "../../../components/carousel/carousel.js";
-import { LanzamientoComponent } from "../../../components/lanzamientos/lanzamiento.js";
+import { HeaderComponent } from "../../../components/header/header.js"
+import { FooterComponent } from "../../../components/footer/footer.js"
+import { CarouselComponent } from "../../../components/carousel/carousel.js"
+import { LanzamientoComponent } from "../../../components/lanzamientos/lanzamiento.js"
 
 // 1. IMPORTAR COMPONENTE DE MERCH
-import { MerchCardComponent } from "../../components/merch/merch-card.js";
+import { MerchCardComponent } from "../../components/merch/merch-card.js"
 
-window.customElements.define('header-info', HeaderComponent);
-window.customElements.define('footer-info', FooterComponent);
-window.customElements.define('carousel-info', CarouselComponent);
-window.customElements.define('lanzamiento-card', LanzamientoComponent);
+window.customElements.define('header-info', HeaderComponent)
+window.customElements.define('footer-info', FooterComponent)
+window.customElements.define('carousel-info', CarouselComponent)
+window.customElements.define('lanzamiento-card', LanzamientoComponent)
 
 // 2. REGISTRAR COMPONENTE DE MERCH
-window.customElements.define('merch-card', MerchCardComponent);
+window.customElements.define('merch-card', MerchCardComponent)
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    const artistId = params.get('id');
+    const params = new URLSearchParams(window.location.search)
+    const idArtista = params.get('id')
 
-    if (artistId) {
-        renderizarPerfilArtista(artistId);
+    console.log(idArtista)
+    if (idArtista) {
+        renderizarPerfilArtista(idArtista)
     } else {
-        document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado</h1>';
+        document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado</h1>'
     }
-});
+})
 
-function renderizarPerfilArtista(id) {
+async function renderizarPerfilArtista(idArtista) {
     
     const mockDB = {
-        "1": {
+        "692ddf5b390fa073d5c24ed2": {
             nombre: "MEXTASIS",
             imgPortada: "/assets/baner.png", 
             redes: [
@@ -43,7 +44,7 @@ function renderizarPerfilArtista(id) {
                     artista: "Mextasis",
                     imagen: "/assets/lanzamientos/portada1.png",
                     spotify: "http://spotify.com...",
-                    iconSpotify: "/assets/icons/icon_spotify.png",
+                    iconSpotify: "",
                     youtube: "http://youtube.com...",
                     iconYoutube: "/assets/icons/icon_youtube.png"
                 },
@@ -75,87 +76,113 @@ function renderizarPerfilArtista(id) {
             
             bioImg: "/assets/perfil.png", 
             bioDescripcion: `
-                <p>DESDE LAS AULAS DE SECUNDARIA EN CIUDAD OBREGÓN, SONORA, HASTA LOS ESCENARIOS DONDE LA PASIÓN COBRA VIDA. MEXTASIS ES MÁS QUE UNA BANDA; ES EL ECO DE UNA AMISTAD FORJADA A LO LARGO DE CASI UNA DÉCADA.</p>
+                <p>DESDE LAS AULAS DE SECUNDARIA EN CIUDAD OBREGÓN, SONORA, HASTA LOS ESCENARIOS DONDE LA PASIÓN COBRA VIDA. MEXTASIS ES MÁS QUE UNA BANDA ES EL ECO DE UNA AMISTAD FORJADA A LO LARGO DE CASI UNA DÉCADA.</p>
                 <p>MEXTASIS ES UNA AVALANCHA DE EMOCIONES, UNA ENERGÍA IMPARABLE QUE SE ALIMENTA DE LA CURIOSIDAD Y LA PASIÓN POR EXPLORAR NUEVOS SONIDOS. CADA CANCIÓN ES UN TESTIMONIO DE SU CRECIMIENTO, CADA ACORDE UNA PROMESA DE QUE LO MEJOR ESTÁ AÚN POR VENIR.</p>
                 <p>BIENVENIDOS A SU HISTORIA. BIENVENIDOS A MEXTASIS.</p>
             `
         }
-    };
-
-    const datos = mockDB[id];
-
-    if (!datos) {
-        document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado en la base de datos.</h1>';
-        return;
     }
 
-    // --- RENDER HERO ---
-    const heroSection = document.getElementById('hero-section');
-    let redesHTML = '';
-    datos.redes.forEach(red => {
-        redesHTML += `<a href="${red.link}" target="_blank"><img src="${red.icon}" alt="Red Social"></a>`;
-    });
+    try {
+        const response = await fetch(`/api/usuarios/${idArtista}`)
+        const data = await response.json()
 
-    heroSection.innerHTML = `
-        <img src="${datos.imgPortada}" alt="${datos.nombre}" class="hero-bg">
-        <div class="hero-overlay">
-            <h1 class="artist-name-hero">${datos.nombre}</h1>
-            <div class="hero-socials">
-                ${redesHTML}
+        if (!response.ok) {
+            document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado en la base de datos.</h1>'
+            console.error(data)
+            alert(data.error || data.message || "Ocurrió un error inesperado")
+            return
+        }
+        
+        if (!data) {
+            document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado en la base de datos.</h1>'
+            return
+        }
+
+        const { imagenes, redesSociales, nombre, merch, biografia} = data
+        const { perfil, banner } = imagenes
+        const { instagram, spotify } = redesSociales
+
+        // --- RENDER HERO ---
+        const heroSection = document.getElementById('hero-section')
+        let redesHTML = `
+            <a href="${instagram}" target="_blank"><img src="/assets/icons/icon_instagram.png" alt="Red Social"></a>
+            <a href="${spotify}" target="_blank"><img src="/assets/icons/icon_spotify.png" alt="Red Social"></a>
+        `
+        heroSection.innerHTML = `
+            <img src="${banner}" alt="${nombre}" class="hero-bg">
+            <div class="hero-overlay">
+                <h1 class="artist-name-hero">${nombre}</h1>
+                <div class="hero-socials">
+                    ${redesHTML}
+                </div>
             </div>
-        </div>
-    `;
+        `
 
+        // render discografia
+
+
+        // 4. RENDER MERCH (NUEVA LÓGICA)
+        const merchContainer = document.getElementById('merch-container')
+        if (merch && merch.length > 0) {
+            merch.forEach(producto => {
+                const { _id, nombre, imagenes, precio } = producto
+
+                const card = document.createElement('merch-card')
+                card.setAttribute('id', _id)
+                card.setAttribute('nombre', nombre)
+                card.setAttribute('imagen', imagenes[0])
+                card.setAttribute('precio', `$ ${precio}`)
+
+                merchContainer.appendChild(card)
+            })
+        } else {
+            merchContainer.innerHTML = '<p style="color:white opacity:0.6">Próximamente mercancía oficial.</p>'
+        }
+
+        // --- RENDER EVENTOS ---
+        const eventsContainer = document.getElementById('events-container')
+        const carousel = document.createElement('carousel-info')
+        eventsContainer.appendChild(carousel)
+
+        // --- RENDER BIO ---
+        const bioSection = document.getElementById('bio-section')
+        bioSection.innerHTML = `
+            <div class="bio-left-col">
+                <img src="${perfil}" alt="Foto Biografía ${nombre}">
+            </div>
+            <div class="bio-right-col">
+                <div class="bio-text-content">
+                    ${biografia}
+                </div>
+            </div>
+        `
+    
+        
+    } catch (error) {
+        document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado en la base de datos.</h1>'
+        console.error("Error de conexión:", error)
+        alert("Error de conexión con el servidor")
+    }
+    
+    const datos = mockDB[idArtista]
     // --- RENDER DISCOGRAFIA ---
-    const discographyContainer = document.getElementById('discography-container');
+    const discographyContainer = document.getElementById('discography-container')
     datos.discografia.forEach(disco => {
-        const card = document.createElement('lanzamiento-card');
-        card.setAttribute('titulo', disco.titulo);
-        card.setAttribute('artista', disco.artista);
-        card.setAttribute('imagen', disco.imagen);
+        const card = document.createElement('lanzamiento-card')
+        card.setAttribute('titulo', disco.titulo)
+        card.setAttribute('artista', disco.artista)
+        card.setAttribute('imagen', disco.imagen)
         if(disco.spotify) {
-            card.setAttribute('spotify-link', disco.spotify);
-            card.setAttribute('icon-spotify', disco.iconSpotify);
+            card.setAttribute('spotify-link', disco.spotify)
+            card.setAttribute('icon-spotify', disco.iconSpotify)
         }
         if(disco.youtube) {
-            card.setAttribute('youtube-link', disco.youtube);
-            card.setAttribute('icon-youtube', disco.iconYoutube);
+            card.setAttribute('youtube-link', disco.youtube)
+            card.setAttribute('icon-youtube', disco.iconYoutube)
         }
-        discographyContainer.appendChild(card);
-    });
+        discographyContainer.appendChild(card)
+    })
 
-    // 4. RENDER MERCH (NUEVA LÓGICA)
-    const merchContainer = document.getElementById('merch-container');
-    if (datos.merch && datos.merch.length > 0) {
-        datos.merch.forEach(producto => {
-            const card = document.createElement('merch-card');
-            
-            card.setAttribute('id', producto._id);
-            card.setAttribute('nombre', producto.nombre);
-            card.setAttribute('imagen', producto.imagen);
-            card.setAttribute('precio', producto.precio);
-
-            merchContainer.appendChild(card);
-        });
-    } else {
-        merchContainer.innerHTML = '<p style="color:white; opacity:0.6;">Próximamente mercancía oficial.</p>';
-    }
-
-    // --- RENDER EVENTOS ---
-    const eventsContainer = document.getElementById('events-container');
-    const carousel = document.createElement('carousel-info');
-    eventsContainer.appendChild(carousel);
-
-    // --- RENDER BIO ---
-    const bioSection = document.getElementById('bio-section');
-    bioSection.innerHTML = `
-        <div class="bio-left-col">
-            <img src="${datos.bioImg}" alt="Foto Biografía ${datos.nombre}">
-        </div>
-        <div class="bio-right-col">
-            <div class="bio-text-content">
-                ${datos.bioDescripcion}
-            </div>
-        </div>
-    `;
+    
 }

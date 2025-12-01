@@ -129,7 +129,7 @@ function renderizarEvento(id, container) {
     const buyBtn = container.querySelector('.btn-buy');
     
     buyBtn.addEventListener('click', () => {
-        const usuarioSesion = localStorage.getItem('usuario_sonicolirio');
+        const usuarioSesion = localStorage.getItem('usuario');
         
         if (!usuarioSesion) {
             const irALogin = confirm("🔒 Para comprar boletos necesitas iniciar sesión.\n\n¿Deseas ir a la página de inicio de sesión ahora?");

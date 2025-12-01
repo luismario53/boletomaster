@@ -10,28 +10,41 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    console.log("Intentando login con:", email);
-
-    // ==========================================
-    // 🚧 MOCK LOGIN (Sustituir por Fetch)
-    // ==========================================
-    
-    // Simulamos una espera
     const btn = document.querySelector('.btn-auth');
     const originalText = btn.innerText;
     btn.innerText = "VERIFICANDO...";
     btn.disabled = true;
 
-    await new Promise(r => setTimeout(r, 1000));
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
 
-    // Validación fake
-    if (email.includes('@')) {
-        alert("Login Exitoso (Simulado). Redirigiendo...");
-        // Guardaríamos el token aquí: localStorage.setItem('token', '12345');
-        window.location.href = "/pages/Principal/principal.html";
-    } else {
-        alert("Error: Credenciales inválidas");
-        btn.innerText = originalText;
-        btn.disabled = false;
+        const data = await response.json()
+
+        if (!response.ok) {
+            alert(data.mensaje || data.error || "Credenciales inválidas")
+            btn.innerText = originalText
+            btn.disabled = false
+            return
+        }
+
+        // Guardar tokens y usuario
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('refreshToken', data.refreshToken)
+        localStorage.setItem('usuario', JSON.stringify(data.usuario))
+
+        alert(`¡Bienvenido ${data.usuario.nombre}!`)
+        
+        // Redirigir según tipo de usuario (opcional)
+        window.location.href = "/pages/Principal/main.html"
+
+    } catch (error) {
+        console.error("Error de conexión:", error)
+        alert("Error de conexión con el servidor")
+        btn.innerText = originalText
+        btn.disabled = false
     }
 });

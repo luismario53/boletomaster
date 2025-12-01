@@ -8,6 +8,7 @@ export class MerchCardComponent extends HTMLElement {
         this.imagen = this.getAttribute("imagen") || "/assets/merch/merch1.png";
         this.nombre = this.getAttribute("nombre") || "Producto";
         this.precio = this.getAttribute("precio") || "";
+        this.artista = this.getAttribute("artista") || "";
 
         const shadow = this.attachShadow({ mode: 'open' });
         this.#render(shadow);
@@ -24,6 +25,7 @@ export class MerchCardComponent extends HTMLElement {
             <a href="${productUrl}" class="card-link">
                 <div class="card">
                     <div class="info-section">
+                        <div class="text-band">${this.artista}</div>
                         <img class="cover" src="${this.imagen}" alt="${this.nombre}">
                         <div class="text-data">
                             <h3>${this.nombre}</h3>

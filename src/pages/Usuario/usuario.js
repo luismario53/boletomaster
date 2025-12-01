@@ -1,14 +1,16 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
+import { fetchConAuth, protegerPagina, obtenerUsuario, cerrarSesion } from '../../utils/fetchConAuth.js'
 
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
+protegerPagina()
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar si realmente hay sesión
-    const haySesion = localStorage.getItem('usuario_sonicolirio');
+    const usuario = localStorage.getItem('usuario');
     
-    if (!haySesion) {
+    if (!usuario) {
         window.location.href = "/pages/Login/login.html";
     } else {
         renderizarUsuario();
@@ -16,19 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderizarUsuario() {
-    // ==========================================
-    // MAS HARDCODEO
-    // ==========================================
-    const usuario = {
-        nombre: "Juan Pérez",
-        email: "admin@sonicolirio.com",
-        telefono: "55 1234 5678",
-        // tipoUsuario: "CLIENTE",
-        // tipoUsuario: "ARTISTA",
-        tipoUsuario: "ORGANIZADOR",
-        avatar: "/assets/usuario.png",
-        fechaRegistro: "2024-01-15"
-    };
+ 
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
+    const { nombre, telefono, createdAt: fechaRegistro, email, tipoUsuario } = usuario
+    const fechaFormateada = new Date(fechaRegistro).toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    console.log(usuario)
 
     const container = document.getElementById('profile-content');
 
@@ -63,22 +61,22 @@ function renderizarUsuario() {
 
     container.innerHTML = `
         <div class="profile-header">
-            <img src="${usuario.avatar}" alt="${usuario.nombre}" class="big-avatar">
-            <span class="badge">${usuario.tipoUsuario}</span>
+            <img src="/assets/usuario.png" alt="${nombre}" class="big-avatar">
+            <span class="badge">${tipoUsuario}</span>
         </div>
 
         <div class="profile-body">
-            <h1 class="user-name">${usuario.nombre}</h1>
-            <p class="user-email">${usuario.email}</p>
+            <h1 class="user-name">${nombre}</h1>
+            <p class="user-email">${email}</p>
 
             <div class="data-group">
                 <div class="data-item">
                     <strong>Teléfono:</strong>
-                    <span>${usuario.telefono}</span>
+                    <span>${telefono}</span>
                 </div>
                 <div class="data-item">
                     <strong>Miembro desde:</strong>
-                    <span>${usuario.fechaRegistro}</span>
+                    <span>${fechaFormateada}</span>
                 </div>
             </div>
 
@@ -90,12 +88,11 @@ function renderizarUsuario() {
         </div>
     `;
 
-    document.getElementById('btn-logout').addEventListener('click', cerrarSesion);
+    document.getElementById('btn-logout').addEventListener('click', cerrarSesionUsuario);
 }
 
-function cerrarSesion() {
+function cerrarSesionUsuario() {
     if(confirm("¿Estás seguro que deseas salir?")) {
-        localStorage.removeItem('usuario_sonicolirio');
-        window.location.href = "/pages/Principal/main.html";
+        cerrarSesion()
     }
 }
