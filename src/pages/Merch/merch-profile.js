@@ -26,13 +26,13 @@ function renderizarProducto(id) {
             titulo: "CAMISETA OFICIAL 2024",
             precio: 250,
             moneda: "MXN",
-            tallas: ["S", "M", "L", "XL"], // Array de tallas
+            tallas: ["S", "M", "L", "XL"],
             material: "100% Algodón",
             stock: 50,
-            descripcion: "<p>ya me harte de escribir tanta info hardcodeada esto es una descripcion</p>",
+            descripcion: "<p>La camiseta oficial de la gira. Diseño exclusivo en serigrafía de alta calidad.</p>",
             imagenes: [
-                "/assets/merch/merch1.jpg", // Frente
-                "/assets/merch/merch2.jpg" // Espalda (simulada)
+                "/assets/merch/merch1.jpg", 
+                "/assets/merch/merch2.jpg"
             ]
         }
     };
@@ -108,17 +108,48 @@ function renderizarProducto(id) {
         </div>
     `;
 
-    // Interactividad simple para botones de talla
+    // 1. INTERACTIVIDAD TALLAS
     const sizeBtns = container.querySelectorAll('.size-btn');
+    let tallaSeleccionada = null; // Guardamos la talla seleccionada
+
     sizeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             sizeBtns.forEach(b => b.classList.remove('active-size'));
             btn.classList.add('active-size');
+            tallaSeleccionada = btn.innerText; // Guardamos la talla
         });
+    });
+
+    // 2. LÓGICA DEL BOTÓN DE COMPRA (NUEVO)
+    const buyBtn = container.querySelector('.btn-buy');
+    
+    buyBtn.addEventListener('click', () => {
+        // A) Validar Sesión
+        const usuarioSesion = localStorage.getItem('usuario_sonicolirio');
+        
+        if (!usuarioSesion) {
+            // Si NO hay sesión, mostramos mensaje y detenemos.
+            // Usamos 'confirm' para darles la opción de ir al login o cancelar
+            const irALogin = confirm("🔒 Para agregar productos al carrito necesitas iniciar sesión.\n\n¿Deseas ir a la página de inicio de sesión ahora?");
+            
+            if (irALogin) {
+                window.location.href = "/pages/Login/login.html";
+            }
+            return; // Importante: Detiene la función aquí
+        }
+
+        // B) Validar Talla (Opcional pero recomendado)
+        if (!tallaSeleccionada) {
+            alert("⚠️ Por favor selecciona una talla antes de continuar.");
+            return;
+        }
+
+        // C) Éxito
+        alert(`✅ ¡${producto.titulo} (Talla: ${tallaSeleccionada}) agregado al carrito!`);
     });
 }
 
-// FUNCIONES GLOBALES DE GALERÍA (Mismas que evento)
+// FUNCIONES GLOBALES DE GALERÍA
 window.cambiarImagen = function(direction) {
     const total = currentProductImages.length;
     if (total <= 1) return;

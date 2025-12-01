@@ -1,0 +1,83 @@
+/* Heredamos login.css */
+
+.wide-card {
+    max-width: 800px !important;
+}
+
+.form-section {
+    margin-bottom: 30px;
+    background: rgba(255,255,255,0.02);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.form-section h3 {
+    color: #735DC9;
+    font-size: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* ESTILOS PARA LA LISTA DINÁMICA */
+.photo-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.photo-input {
+    flex: 1; /* Que ocupe todo el espacio */
+}
+
+/* Botón de eliminar (rojo pequeño) */
+.remove-btn {
+    background: rgba(255, 77, 77, 0.2);
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+    width: 45px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+}
+
+.remove-btn:hover {
+    background: #ff4d4d;
+    color: white;
+}
+
+/* Botón de agregar más (Verde o neutro) */
+.action-btn {
+    background: transparent;
+    border: 2px dashed #888;
+    color: #ddd;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    border-color: #F8D62C;
+    color: #F8D62C;
+    background: rgba(248, 214, 44, 0.05);
+}
+
+@media (max-width: 600px) {
+    .grid-2-col { grid-template-columns: 1fr; gap: 0; }
+}

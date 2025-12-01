@@ -1,0 +1,75 @@
+/* Heredamos login.css */
+
+.wide-card {
+    max-width: 800px !important;
+}
+
+.form-section {
+    margin-bottom: 30px;
+    background: rgba(255,255,255,0.02);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.form-section h3 {
+    color: #F8D62C; /* Amarillo para variar un poco o #735DC9 */
+    font-size: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* ESTILOS DE TALLAS (CHECKBOXES) */
+.tallas-container {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background: #0f0f10;
+    padding: 10px 15px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    transition: border-color 0.2s;
+}
+
+.checkbox-label:hover {
+    border-color: #F8D62C;
+}
+
+/* Input text area */
+textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #0f0f10;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+textarea:focus { outline: none; border-color: #735DC9; }
+
+@media (max-width: 600px) {
+    .grid-2-col { grid-template-columns: 1fr; gap: 0; }
+}
