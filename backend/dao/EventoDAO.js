@@ -32,8 +32,8 @@ class EventoDAO {
     async obtenerEventoPorId(idEvento) {
         try {
             const evento = await Evento.findById(idEvento)
-                .populate('organizadores', 'nombre email tipoUsuario')
-                .populate('artistas', 'nombre email tipoUsuario');
+                .populate('organizadores')
+                .populate('artistas');
 
             if (!evento) throw new AppError('Evento no encontrado', 404);
             return evento;
@@ -52,8 +52,8 @@ class EventoDAO {
             const filtro = options.filter || {};
             return await Evento.find(filtro)
                 .sort({ fecha: 1 })
-                .populate('organizadores', 'nombre tipoUsuario')
-                .populate('artistas', 'nombre tipoUsuario');
+                .populate('organizadores')
+                .populate('artistas');
         } catch (error) {
             throw new AppError(`DAO Error al obtener todos los eventos: ${error.message}`, 500);
         }
@@ -67,8 +67,8 @@ class EventoDAO {
     async obtenerEventosPorFiltro(filter) {
         try {
             return await Evento.find(filter)
-                .populate('organizadores', 'nombre tipoUsuario')
-                .populate('artistas', 'nombre tipoUsuario');
+                .populate('organizadores')
+                .populate('artistas');
         } catch (error) {
             throw new AppError(`DAO Error al obtener eventos por filtro: ${error.message}`, 500);
         }

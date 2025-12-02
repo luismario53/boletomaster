@@ -1,5 +1,6 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
+import { formatearFecha } from '../../utils/fechaFormateada.js'
 import { fetchConAuth, protegerPagina, obtenerUsuario, cerrarSesion } from '../../utils/fetchConAuth.js'
 
 window.customElements.define('header-info', HeaderComponent);
@@ -21,12 +22,7 @@ function renderizarUsuario() {
  
     const usuario = JSON.parse(localStorage.getItem('usuario'));
     const { nombre, telefono, createdAt: fechaRegistro, email, tipoUsuario } = usuario
-    const fechaFormateada = new Date(fechaRegistro).toLocaleDateString('es-MX', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-    console.log(usuario)
+    const fechaFormateada = formatearFecha(fechaRegistro)
 
     const container = document.getElementById('profile-content');
 

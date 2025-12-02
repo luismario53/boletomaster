@@ -8,6 +8,7 @@ import { conectar } from './config/db.js'
 
 import './models/index.js'
 import eventoRouter from './routes/eventoRoutes.js'
+import galeriaRouter from './routes/galeriaRoutes.js'
 import usuariosRouter from './routes/usuarioRoutes.js'
 import mercanciaRouter from './routes/mercanciaRoutes.js'
 import authRouter from './routes/authRoutes.js'
@@ -31,6 +32,7 @@ app.post('/api/live', (req, res) => {
 //     next(error);
 // });
 
+app.use('/api/galeria/', galeriaRouter)
 app.use('/api/eventos/', eventoRouter)
 app.use('/api/usuarios/', usuariosRouter)
 app.use('/api/merch/', mercanciaRouter)

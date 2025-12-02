@@ -162,7 +162,7 @@ async function renderizarProducto(idMerch) {
         });
 
     } catch (error) {
-        
+        console.log(error)
     }
 }
 
