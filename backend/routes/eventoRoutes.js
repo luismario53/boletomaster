@@ -1,14 +1,14 @@
 import express from "express";
 import EventoController from "../controllers/EventoController.js";
+import { verificarAuth } from '../middleware/auth.js'
 
 const router = express.Router();
 
-router.post("/", EventoController.crearEvento);
+router.post("/", verificarAuth, EventoController.crearEvento);
 router.get("/", EventoController.obtenerEventos);
 router.get("/:id", EventoController.obtenerEventoPorId);
-router.put("/:id", EventoController.actualizarEvento);
-router.delete("/:id", EventoController.eliminarEvento);
-
+router.put("/:id", verificarAuth, EventoController.actualizarEvento);
+router.delete("/:id", verificarAuth, EventoController.eliminarEvento);
 
 
 
