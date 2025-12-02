@@ -10,10 +10,27 @@ const eventoSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  hora: {
+    type: String,
+    required: true
+  },
   direccion: {
     type: String,
     required: true,
     trim: true
+  },
+  precio: {
+    type: Number,
+    required: true
+  },
+  moneda: {
+    type: String,
+    required: true,
+    maxLength: 10
+  },
+  stock: {
+    type: Number,
+    required: true
   },
   lugar: {
     type: String,

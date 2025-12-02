@@ -37,7 +37,7 @@ body {
 .merch-grid {
     display: flex;
     justify-content: center; /* Centrado horizontal */
-    gap: 30px; /* Espacio entre tarjetas */
+    gap: 80px; /* Espacio entre tarjetas */
     flex-wrap: wrap; /* Para que bajen si no caben */
     max-width: 1200px;
     margin: 0 auto; /* Centrar el bloque en la pantalla */

@@ -26,8 +26,8 @@ export class EventCardComponent extends HTMLElement {
     }
 
     #render(shadow) {
-        const fechaLegible = this.#formatearFecha(this.fechaRaw);
-        
+        // const fechaLegible = this.#formatearFecha(this.fechaRaw);
+        const fechaLegible = this.fechaRaw
         const eventUrl = this.eventId ? `/pages/Evento/event-profile.html?id=${this.eventId}` : '#';
 
         shadow.innerHTML = `

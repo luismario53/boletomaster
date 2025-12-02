@@ -34,8 +34,7 @@ async function renderizarTienda(container) {
         data.forEach(producto => {
             const { _id, nombre, imagenes, precio, idArtista: artista } = producto
             const { nombre: nombreArtista } = artista
-            console.log(artista)
-            console.log(nombreArtista)
+            
             const card = document.createElement('merch-card');
             
             card.setAttribute('id', _id);
