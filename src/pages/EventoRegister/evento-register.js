@@ -1,11 +1,11 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
-import { fetchConAuth, protegerPagina, obtenerUsuario } from '../../utils/fetchConAuth.js'
+import { fetchConAuth, protegerPaginaPorRol, obtenerUsuario } from '../../utils/fetchConAuth.js'
 
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
-protegerPagina()
+protegerPaginaPorRol()
 document.getElementById('evento-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 

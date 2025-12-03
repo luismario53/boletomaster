@@ -28,7 +28,9 @@ router.get("/tipo/:tipo", async (req, res) => {
   try {
     const { tipo } = req.params;
 
-    const response = await fetch(`${API_BASE_URL}/api/usuarios/tipo/${tipo}`)
+    const response = await fetch(`${API_BASE_URL}/api/usuarios/tipo/${tipo}`, {
+      headers: crearHeadersConAuth(req)
+    })
     const data = await response.json();
 
     if (!response.ok) {

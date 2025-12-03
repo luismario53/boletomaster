@@ -57,11 +57,45 @@ export function cerrarSesion() {
   window.location.href = '/pages/principal/main.html'
 }
 
+
 /**
- * Proteger página - redirige si no está autenticado
+ * Verificar si el usuario tiene alguno de los roles especificados
+ * @param {...string} roles - Roles permitidos
+ * @returns {boolean}
  */
-export function protegerPagina() {
+export function tieneAlgunRol(...roles) {
+  const usuario = obtenerUsuario()
+  return usuario ? roles.includes(usuario.tipoUsuario) : false
+}
+
+/**
+ * Verificar si el usuario tiene alguno de los roles especificados
+ * @param {...string} roles - Roles permitidos
+ * @returns {boolean}
+ */
+export function tieneAlgunRol(...roles) {
+  const usuario = obtenerUsuario()
+  return usuario ? roles.includes(usuario.tipoUsuario) : false
+}
+
+
+/**
+ * Proteger página por rol - redirige si no tiene el rol requerido
+ * @param {...string} rolesPermitidos - Roles que pueden acceder (por defecto: ADMINISTRADOR)
+ */
+export function protegerPaginaPorRol(...rolesPermitidos) {
+  if (rolesPermitidos.length === 0) {
+    rolesPermitidos = ['ADMINISTRADOR']
+  }
+
   if (!estaAutenticado()) {
     window.location.href = '/pages/Login/login.html'
+    return
+  }
+
+  if (!tieneAlgunRol(...rolesPermitidos)) {
+    alert('No tienes permisos para acceder a esta página')
+    window.location.href = '/pages/principal/main.html'
   }
 }
+

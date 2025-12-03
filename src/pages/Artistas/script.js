@@ -1,6 +1,7 @@
 import { HeaderComponent } from "../../components/header/header.js"
 import { FooterComponent } from "../../components/footer/footer.js"
 import { ArtistCardComponent } from "../../components/artist/artist-card.js"
+import { fetchConAuth } from '../../utils/fetchConAuth.js'
 
 const TIPO_USUARIO = 'ARTISTA'
 window.customElements.define('footer-info', FooterComponent)
@@ -20,7 +21,7 @@ async function renderizarArtistas(container) {
 
         if (!response.ok) {
             console.error(data)
-            alert(data.error || data.message || "Ocurrió un error inesperado")
+            alert(data.error || data.mensaje || "Ocurrió un error inesperado")
             return
         }
 
