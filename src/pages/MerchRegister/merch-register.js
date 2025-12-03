@@ -1,13 +1,13 @@
 import { HeaderComponent } from "../../components/header/header.js"
 import { FooterComponent } from "../../components/footer/footer.js"
-import { fetchConAuth, protegerPagina, obtenerUsuario } from '../../utils/fetchConAuth.js'
+import { fetchConAuth, protegerPaginaPorRol, obtenerUsuario } from '../../utils/fetchConAuth.js'
 
 window.customElements.define('header-info', HeaderComponent)
 window.customElements.define('footer-info', FooterComponent)
 
 const TIPO_USUARIO = 'ARTISTA'
 
-protegerPagina()
+protegerPaginaPorRol()
 // CARGAR LISTA DE ARTISTAS PARA EL SELECTOR
 document.addEventListener('DOMContentLoaded', () => {
     cargarArtistasEnSelector()

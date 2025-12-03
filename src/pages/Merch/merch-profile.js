@@ -1,6 +1,8 @@
 import { HeaderComponent } from "../../../components/header/header.js";
 import { FooterComponent } from "../../../components/footer/footer.js";
 
+import { agregarAlCarrito, obtenerCarrito, obtenerTotal } from "../../utils/carrito.js";
+
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
@@ -55,10 +57,9 @@ async function renderizarProducto(idMerch) {
             return;
         }
 
-
-
-        console.log(data)
         const { imagenes, tallas, precio, moneda, nombre, material, stock, descripcion } = data
+
+        agregarCurrentItem(data)
         currentProductImages = [...imagenes]
         // Generar Miniaturas
         let thumbnailsHTML = '';
@@ -136,6 +137,7 @@ async function renderizarProducto(idMerch) {
         // 2. LÓGICA DEL BOTÓN DE COMPRA (NUEVO)
         const buyBtn = container.querySelector('.btn-buy');
         
+        // revisar funcion para quitarla por protegerPagina
         buyBtn.addEventListener('click', () => {
             // A) Validar Sesión
             const usuarioSesion = localStorage.getItem('usuario');
@@ -157,8 +159,10 @@ async function renderizarProducto(idMerch) {
                 return;
             }
 
+            agregarProductoAlCarrito(tallaSeleccionada)
             // C) Éxito
-            alert(`✅ ¡${titulo} (Talla: ${tallaSeleccionada}) agregado al carrito!`);
+            alert(`✅ ¡Producto agregado al carrito!`);
+            // limpiarCurrentItem()
         });
 
     } catch (error) {
@@ -188,3 +192,33 @@ function actualizarVista() {
         else t.classList.remove('active-thumb');
     });
 }
+
+
+/* Carrito de compras */
+const agregarProductoAlCarrito = (tallaSeleccionada) => {
+    const producto = JSON.parse(localStorage.getItem('current_item')) || {}
+    if(!producto) {
+        alert('El producto no existe o no esta disponible')
+        return
+    }
+
+    producto['talla'] = tallaSeleccionada
+    const carrito = agregarAlCarrito(producto)
+    console.log(carrito)
+}
+
+const agregarCurrentItem = (data) => {
+    const { _id, imagenes, precio, moneda, nombre, material, stock, descripcion } = data
+    localStorage.setItem('current_item', JSON.stringify({
+        _id: _id,
+        imagenes,
+        nombre,
+        precio,
+        moneda,
+        stock,
+        material,
+        descripcion
+    }))
+}
+
+const limpiarCurrentItem = () => localStorage.removeItem('current_item')

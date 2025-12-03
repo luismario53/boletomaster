@@ -1,12 +1,12 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
 import { formatearFecha } from '../../utils/fechaFormateada.js'
-import { fetchConAuth, protegerPagina, obtenerUsuario, cerrarSesion } from '../../utils/fetchConAuth.js'
+import { fetchConAuth, protegerPaginaPorRol, obtenerUsuario, cerrarSesion } from '../../utils/fetchConAuth.js'
 
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
-protegerPagina()
+protegerPaginaPorRol()
 document.addEventListener('DOMContentLoaded', () => {
     // Verificar si realmente hay sesión
     const usuario = localStorage.getItem('usuario');

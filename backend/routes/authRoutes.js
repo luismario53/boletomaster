@@ -1,7 +1,6 @@
 // routes/authRoutes.js
 import { Router } from 'express'
 import AuthController from '../controllers/AuthController.js'
-import { verificarAuth } from '../middleware/auth.js'
 
 const router = Router()
 
@@ -19,9 +18,6 @@ router.post('/refresh', AuthController.refreshToken)
 // ========================
 // Rutas protegidas
 // ========================
-
-// GET /api/auth/me - Obtener perfil del usuario autenticado
-router.get('/me', verificarAuth, AuthController.perfil)
 
 
 export default router
