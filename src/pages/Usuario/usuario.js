@@ -1,34 +1,44 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
-import { formatearFecha } from '../../utils/fechaFormateada.js'
-import { fetchConAuth, protegerPaginaPorRol, obtenerUsuario, cerrarSesion } from '../../utils/fetchConAuth.js'
 
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
-protegerPaginaPorRol()
 document.addEventListener('DOMContentLoaded', () => {
-    // Verificar si realmente hay sesión
-    const usuario = localStorage.getItem('usuario');
+    // 1. VERIFICAR SESIÓN CON LA LLAVE CORRECTA
+    const usuarioJSON = localStorage.getItem('usuario_sonicolirio'); // <--- CORRECCIÓN CLAVE
     
-    if (!usuario) {
-        window.location.href = "/pages/Login/login.html";
+    if (!usuarioJSON) {
+        // Si no hay sesión, ir al login
+        window.location.href = "/src/pages/Login/login.html";
     } else {
-        renderizarUsuario();
+        try {
+            const usuario = JSON.parse(usuarioJSON);
+            renderizarUsuario(usuario);
+        } catch (error) {
+            console.error("Error al leer usuario:", error);
+            localStorage.removeItem('usuario_sonicolirio'); // Limpiar si está corrupto
+            window.location.href = "/src/pages/Login/login.html";
+        }
     }
 });
 
-function renderizarUsuario() {
- 
-    const usuario = JSON.parse(localStorage.getItem('usuario'));
-    const { nombre, telefono, createdAt: fechaRegistro, email, tipoUsuario } = usuario
-    const fechaFormateada = formatearFecha(fechaRegistro)
+function renderizarUsuario(usuario) {
+    const { nombre, telefono, createdAt: fechaRegistro, email, tipoUsuario } = usuario;
+    
+    // Función simple para formatear fecha (sin importar archivos externos)
+    const fechaObj = new Date(fechaRegistro || Date.now());
+    const fechaFormateada = fechaObj.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const container = document.getElementById('profile-content');
 
+    // --- BOTONES DE ADMIN ---
+    // ... dentro de renderizarUsuario ...
+
     let adminButtonsHTML = '';
 
-    if (usuario.tipoUsuario === 'ORGANIZADOR') {
+    // PANEL PARA ORGANIZADORES / ADMINS
+    if (usuario.tipoUsuario === 'ORGANIZADOR' || usuario.tipoUsuario === 'ADMIN') {
         const artistaRegister = "/pages/ArtistaRegister/artista-register.html";
         const eventoRegister = "/pages/EventoRegister/evento-register.html";
         const merchRegister = "/pages/MerchRegister/merch-register.html";
@@ -38,23 +48,30 @@ function renderizarUsuario() {
             <div class="admin-panel">
                 <p class="admin-title">PANEL DE GESTIÓN</p>
                 <div class="admin-grid">
-                    <a href="${artistaRegister}" class="admin-btn">
-                        <span></span> Nuevo Artista
-                    </a>
-                    <a href="${eventoRegister}" class="admin-btn">
-                        <span></span> Nuevo Evento
-                    </a>
-                    <a href="${merchRegister}" class="admin-btn">
-                        <span></span> Nueva Merch
-                    </a>
-                    <a href="${galeriaRegister}" class="admin-btn">
-                        <span></span> Nuevo Album
+                    <a href="${artistaRegister}" class="admin-btn"><span></span> Nuevo Artista</a>
+                    <a href="${eventoRegister}" class="admin-btn"><span></span> Nuevo Evento</a>
+                    <a href="${merchRegister}" class="admin-btn"><span></span> Nueva Merch</a>
+                    <a href="${galeriaRegister}" class="admin-btn"><span></span> Nueva Galería</a>
+                </div>
+            </div>
+        `;
+    } 
+    // PANEL EXCLUSIVO PARA ARTISTAS (NUEVO)
+    else if (usuario.tipoUsuario === 'ARTISTA') {
+        const lanzamientoRegister = "/pages/LanzamientoRegister/lanzamiento-register.html";
+        
+        adminButtonsHTML = `
+            <div class="admin-panel">
+                <p class="admin-title">PANEL DE ARTISTA</p>
+                <div class="admin-grid" style="grid-template-columns: 1fr;"> <a href="${lanzamientoRegister}" class="admin-btn">
+                        <span></span> Nuevo Lanzamiento
                     </a>
                 </div>
             </div>
         `;
     }
 
+    // --- RENDERIZADO ---
     container.innerHTML = `
         <div class="profile-header">
             <img src="/assets/usuario.png" alt="${nombre}" class="big-avatar">
@@ -68,7 +85,7 @@ function renderizarUsuario() {
             <div class="data-group">
                 <div class="data-item">
                     <strong>Teléfono:</strong>
-                    <span>${telefono}</span>
+                    <span>${telefono || 'No registrado'}</span>
                 </div>
                 <div class="data-item">
                     <strong>Miembro desde:</strong>
@@ -78,7 +95,9 @@ function renderizarUsuario() {
 
             ${adminButtonsHTML}
 
-            <hr class="divider"> <button id="btn-logout" class="logout-btn">
+            <hr class="divider"> 
+            
+            <button id="btn-logout" class="logout-btn">
                 CERRAR SESIÓN
             </button>
         </div>
@@ -89,6 +108,11 @@ function renderizarUsuario() {
 
 function cerrarSesionUsuario() {
     if(confirm("¿Estás seguro que deseas salir?")) {
-        cerrarSesion()
+        // Borrar la sesión
+        localStorage.removeItem('usuario_sonicolirio');
+        localStorage.removeItem('token'); // Si guardaste el token también
+        
+        // Ir al Home
+        window.location.href = "/pages/Principal/main.html";
     }
 }

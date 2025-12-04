@@ -2,7 +2,68 @@
 import UsuarioDAO from '../dao/UsuarioDAO.js'
 import { generarToken, generarRefreshToken, verificarToken } from '../utils/jwtUtils.js'
 
+// --- NUEVOS IMPORTS NECESARIOS PARA EL REGISTRO ---
+import Usuario from '../models/Usuario.js' // Asegúrate de que la ruta al modelo sea correcta
+import bcrypt from 'bcryptjs'
+// --------------------------------------------------
+
 const AuthController = {
+
+  /**
+   * Registrar nuevo usuario
+   * POST /api/auth/register
+   */
+  async register(req, res) {
+    try {
+      console.log("📥 Recibiendo registro completo:", req.body);
+      
+      const { 
+          nombre, 
+          email, 
+          password, 
+          telefono, 
+          tipoUsuario,
+          biografia, 
+          redesSociales, 
+          imagenes 
+      } = req.body;
+
+      // validar si ya existe
+      const existe = await Usuario.findOne({ email });
+      if (existe) {
+        return res.status(400).json({ success: false, message: 'El correo ya está registrado' });
+      }
+
+      // encriptar contraseña
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // crear el usuario CON TODOS LOS DATOS
+      const nuevoUsuario = new Usuario({
+        nombre,
+        email,
+        telefono,
+        tipoUsuario,
+        password: hashedPassword,
+        biografia, 
+        redesSociales, 
+        imagenes
+      });
+
+      // guardar
+      await nuevoUsuario.save();
+      console.log("Usuario registrado con perfil completo.");
+
+      res.status(201).json({ 
+        success: true, 
+        message: 'Usuario creado exitosamente. Ahora puedes iniciar sesión.' 
+      });
+
+    } catch (error) {
+      console.error("Error en registro:", error);
+      res.status(500).json({ success: false, message: 'Error al registrar', error: error.message });
+    }
+  },
 
   /**
    * Login de usuario
@@ -12,32 +73,26 @@ const AuthController = {
     try {
       const { email, password } = req.body
 
-      // Validar campos requeridos
       if (!email || !password) {
-        return res.status(400).json({
-          mensaje: 'Email y password son requeridos'
-        })
+        return res.status(400).json({ mensaje: 'Email y password son requeridos' })
       }
 
-      // Buscar usuario por email (incluye password)
+      // Buscar usuario
       const usuario = await UsuarioDAO.buscarPorEmailConPassword(email)
 
       if (!usuario) {
-        return res.status(401).json({
-          mensaje: 'Credenciales inválidas'
-        })
+        return res.status(401).json({ mensaje: 'Credenciales inválidas' })
       }
 
-      // Validar password
+      // Validar password (El DAO usa bcrypt internamente o aquí comparamos)
+      // Si tu DAO.validarPassword ya usa bcrypt.compare, esto está perfecto.
       const passwordValido = await UsuarioDAO.validarPassword(password, usuario.password)
 
       if (!passwordValido) {
-        return res.status(401).json({
-          mensaje: 'Credenciales inválidas'
-        })
+        return res.status(401).json({ mensaje: 'Credenciales inválidas' })
       }
 
-      // Crear payload para el token
+      // Crear payload
       const payload = {
         id: usuario._id,
         email: usuario.email,
@@ -45,11 +100,11 @@ const AuthController = {
         tipoUsuario: usuario.tipoUsuario
       }
 
-      // Generar tokens
+      // Generar tokens con tus utilidades
       const token = generarToken(payload)
       const refreshToken = generarRefreshToken({ id: usuario._id })
 
-      // Responder sin el password
+      // Responder sin password
       const { password: _, ...usuarioSinPassword } = usuario.toObject()
 
       res.json({
@@ -60,10 +115,8 @@ const AuthController = {
       })
 
     } catch (error) {
-      res.status(500).json({
-        mensaje: 'Error en el servidor',
-        error: error.message
-      })
+      console.error(error);
+      res.status(500).json({ mensaje: 'Error en el servidor', error: error.message })
     }
   },
 
@@ -76,24 +129,16 @@ const AuthController = {
       const { refreshToken } = req.body
 
       if (!refreshToken) {
-        return res.status(400).json({
-          mensaje: 'Refresh token requerido'
-        })
+        return res.status(400).json({ mensaje: 'Refresh token requerido' })
       }
 
-      // Verificar refresh token
       const decoded = verificarToken(refreshToken)
-
-      // Buscar usuario
       const usuario = await UsuarioDAO.obtenerUsuarioPorId(decoded.id)
 
       if (!usuario || !usuario.activo) {
-        return res.status(401).json({
-          mensaje: 'Usuario no válido'
-        })
+        return res.status(401).json({ mensaje: 'Usuario no válido' })
       }
 
-      // Generar nuevo token
       const payload = {
         id: usuario._id,
         email: usuario.email,
@@ -109,32 +154,23 @@ const AuthController = {
       })
 
     } catch (error) {
-      res.status(401).json({
-        mensaje: 'Refresh token inválido o expirado'
-      })
+      res.status(401).json({ mensaje: 'Refresh token inválido o expirado' })
     }
   },
 
   /**
-   * Obtener perfil del usuario autenticado
+   * Obtener perfil
    * GET /api/auth/me
    */
   async perfil(req, res) {
     try {
       const usuario = await UsuarioDAO.obtenerUsuarioPorId(req.usuario.id)
-
       if (!usuario) {
-        return res.status(404).json({
-          mensaje: 'Usuario no encontrado'
-        })
+        return res.status(404).json({ mensaje: 'Usuario no encontrado' })
       }
-
       res.json(usuario)
     } catch (error) {
-      res.status(500).json({
-        mensaje: 'Error al obtener perfil',
-        error: error.message
-      })
+      res.status(500).json({ mensaje: 'Error al obtener perfil', error: error.message })
     }
   },
 }

@@ -1,124 +1,98 @@
-import MercanciaDAO from "../dao/MercanciaDAO.js";
+import Mercancia from '../models/Mercancia.js'; // Importamos el modelo directamente
 
-class MercanciaController {
+const MercanciaController = {
 
-    async crearMercancia(req, res) {
+    // crearMercancia
+    crearMercancia: async (req, res) => {
         try {
-            const mercancia = req.body;
-            const nuevaMercancia = await MercanciaDAO.crearMercancia(mercancia);
-            res.status(201).json({
-                mensaje: "Mercancia creada correctamente",
-                mercancia: nuevaMercancia
+            console.log("👕 Creando merch:", req.body);
+            const nuevaMercancia = new Mercancia(req.body);
+            await nuevaMercancia.save();
+            
+            res.status(201).json({ 
+                mensaje: "Mercancia creada correctamente", 
+                mercancia: nuevaMercancia 
             });
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al crear la mercancia",
-                error: error.message
-            });
+            console.error(error);
+            res.status(500).json({ mensaje: "Error al crear la mercancia", error: error.message });
         }
-    }
+    },
 
-    async obtenerTodaLaMercancia(req, res) {
+    // obtenerTodaLaMercancia
+    obtenerTodaLaMercancia: async (req, res) => {
         try {
-            const mercancia = await MercanciaDAO.obtenerTodaLaMercancia({activo: true});
+            const mercancia = await Mercancia.find(); // Trae todo
             res.status(200).json(mercancia);
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener la mercancia",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al obtener la mercancia", error: error.message });
         }
-    }
+    },
 
-    async obtenerMercanciaPorArtista(req, res) {
-        try {
-            const { idArtista } = req.params
-            const mercancia = await MercanciaDAO.obtenerMercanciaPorArtista(idArtista);
-            res.status(200).json(mercancia);
-        } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener la mercancia",
-                error: error.message
-            });
-        }
-    }
-
-    async obtenerMercanciaPorId(req, res) {
+    // obtenerMercanciaPorId
+    obtenerMercanciaPorId: async (req, res) => {
         try {
             const { id } = req.params;
-            const mercancia = await MercanciaDAO.obtenerMercanciaPorId(id);
+            const mercancia = await Mercancia.findById(id);
 
             if (!mercancia) {
-                return res.status(404).json({ mensaje: "Mercancia no encontrado" });
+                return res.status(404).json({ mensaje: "Mercancia no encontrada" });
             }
-
             res.status(200).json(mercancia);
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener la mercancia",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al obtener la mercancia", error: error.message });
         }
-    }
+    },
 
-    async actualizarMercancia(req, res) {
+    // obtenerMercanciaPorArtista
+    obtenerMercanciaPorArtista: async (req, res) => {
+        try {
+            const { artista } = req.params; // El ID que viene en la URL
+            
+            console.log("Backend buscando merch con idArtista:", artista); // <--- DEBUG
+
+            // IMPORTANTE: Asegúrate de que en tu Modelo (Mongo) el campo se llame "idArtista"
+            const mercancia = await Mercancia.find({ idArtista: artista });
+            
+            res.status(200).json(mercancia);
+        } catch (error) {
+            res.status(500).json({ mensaje: "Error al buscar por artista", error: error.message });
+        }
+    },
+
+    // actualizarMercancia
+    actualizarMercancia: async (req, res) => {
         try {
             const { id } = req.params;
-            const datosActualizados = req.body;
-
-            const mercanciaActualizada = await MercanciaDAO.actualizarMercancia(id, datosActualizados);
+            const mercanciaActualizada = await Mercancia.findByIdAndUpdate(id, req.body, { new: true });
 
             if (!mercanciaActualizada) {
-                return res.status(404).json({ mensaje: "Mercancia no encontrado" });
+                return res.status(404).json({ mensaje: "Mercancia no encontrada" });
             }
 
-            res.status(200).json({
-                mensaje: "Mercancia actualizado correctamente",
-                mercancia: mercanciaActualizada
+            res.status(200).json({ 
+                mensaje: "Mercancia actualizada correctamente", 
+                mercancia: mercanciaActualizada 
             });
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al actualizar la mercancia",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al actualizar", error: error.message });
         }
-    }
+    },
 
-    async eliminarMercancia(req, res) {
+    // eliminarMercancia
+    eliminarMercancia: async (req, res) => {
         try {
             const { id } = req.params;
-            const eliminado = await MercanciaDAO.eliminarMercancia(id);
+            const eliminado = await Mercancia.findByIdAndDelete(id);
 
             if (!eliminado) {
-                return res.status(404).json({ mensaje: "Mercancia no encontrado" });
+                return res.status(404).json({ mensaje: "Mercancia no encontrada" });
             }
-
-            res.status(200).json({ mensaje: "Mercancia eliminado correctamente" });
+            res.status(200).json({ mensaje: "Mercancia eliminada correctamente" });
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al eliminar la mercancia",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al eliminar", error: error.message });
         }
     }
+};
 
-    async desactivarMercancia(req, res) {
-        try {
-            const { id } = req.params;
-            const desactivado = await MercanciaDAO.desactivarMercancia(id);
-
-            if (!desactivado) {
-                return res.status(404).json({ mensaje: "Mercancia no encontrado" });
-            }
-
-            res.status(200).json({ mensaje: "Mercancia eliminado correctamente" });
-        } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al desactivar la mercancia",
-                error: error.message
-            });
-        }
-    }
-}
-
-export default new MercanciaController();
+export default MercanciaController;

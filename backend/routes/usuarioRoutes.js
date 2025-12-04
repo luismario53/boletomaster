@@ -6,11 +6,17 @@ import { rolesPermitidos } from '../utils/rolesPermitidos.js'
 
 const router = express.Router()
 
+// Rutas Administrativas (Se quedan protegidas)
 router.post('/', verificarAuth, verificarRol(rolesPermitidos), UsuarioController.crear)
 router.get('/', verificarAuth, verificarRol(rolesPermitidos), UsuarioController.obtenerTodos)
-router.get('/:id', UsuarioController.obtenerPorId)
+
+// Rutas de Usuario Específico
+router.get('/:id', UsuarioController.obtenerPorId) // Esta ya era pública
 router.put('/:id', verificarAuth, UsuarioController.actualizar)
-router.delete('/:id', verificarAuth,UsuarioController.eliminar)
-router.get('/tipo/:tipo',  verificarAuth, verificarRol(rolesPermitidos), UsuarioController.obtenerPorTipo)
+router.delete('/:id', verificarAuth, UsuarioController.eliminar)
+
+// === CORRECCIÓN AQUÍ ===
+// Eliminamos verificarAuth y verificarRol para que el público vea los artistas
+router.get('/tipo/:tipo', UsuarioController.obtenerPorTipo) 
 
 export default router

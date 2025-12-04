@@ -8,56 +8,43 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     e.preventDefault();
 
     const btn = document.querySelector('.btn-auth');
-    const originalText = btn.innerText
+    const originalText = btn.innerText;
     btn.innerText = "REGISTRANDO...";
     btn.disabled = true;
 
-    // Recopilar datos del formulario
+    // Recopilar datos
     const datos = {
         nombre: document.getElementById('nombre').value,
         email: document.getElementById('email').value,
         telefono: document.getElementById('telefono').value,
         password: document.getElementById('password').value,
-        
-        // 🔒 IMPORTANTE: Aquí forzamos que siempre sea CLIENTE
-        tipoUsuario: "CLIENTE",
-        
-        // Mongo pone la fecha solo, pero por si acaso en el mock:
-        createdAt: new Date()
+        tipoUsuario: "CLIENTE" // Por defecto en registro público
     };
 
-    // console.log("Enviando datos de NUEVO CLIENTE:", datos);
-    console.log(datos)
-
     try {
-        const response = await fetch("/api/usuarios", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(datos),
-        })
+        // CONEXIÓN REAL AL BACKEND (Puerto 5000)
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
-        // ✅ Verificar si la respuesta fue exitosa
-        if (!response.ok) {
-            // El servidor devolvió 400, 401, 500, etc.
-            console.error("Ocurrió un error inesperado:", data)
-            alert(data.error || data.message || "Error al registrar usuario")
-
-            btn.innerText = originalText
-            btn.disabled = false
-            return
+        if (response.ok) {
+            alert(`¡Cuenta creada! Bienvenido, ${datos.nombre}. Ahora inicia sesión.`);
+            window.location.href = "/pages/Login/login.html";
+        } else {
+            // Error del backend (ej: correo duplicado)
+            alert(data.message || "Error al registrar");
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
 
-        alert(`¡Bienvenido, ${datos.nombre}! Tu cuenta ha sido creada.`);
-        window.location.href = "/pages/Login/login.html"
-
     } catch (error) {
-        btn.innerText = originalText
-        btn.disabled = false
-        console.error("Error de conexión:", error)
-        alert("Error de conexión con el servidor")
+        console.error("Error:", error);
+        alert("No se pudo conectar con el servidor.");
+        btn.innerText = originalText;
+        btn.disabled = false;
     }
 });

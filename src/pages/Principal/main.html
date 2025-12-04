@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Principal</title>
 
-    <link rel="stylesheet" href="/pages/Principal/styles.css">
+    <link rel="stylesheet" href="pages/Principal/styles.css">
+    <!-- <link rel="stylesheet" href="styles.css">  --->
 </head>
 <body>
     <header-info></header-info>
@@ -15,69 +16,18 @@
         <h2>Últimos Lanzamientos</h2>
 
         <div class="lanzamientos-container">
-
-            <!-- Asi se tiene que hacer un lanzamiento, le pasas una iamgen, titulo del lanzamiento, el artista al que pertenece, y los links e inconos
-                 Claramente un icono sin link se va a cargar, un link sin icono no, asi que hay que pasar bien los links -->
-            <lanzamiento-card 
-                imagen="/assets/lanzamientos/portada4.jpg"
-                titulo="Quebranto"
-                artista="Mextasis"
-                spotify-link="https://open.spotify.com/intl-es/track/6TArX46XDuYJLiDcpoambA?si=c72c8b4de3514679"
-                icon-spotify="/assets/icons/icon_spotify.png"
-                youtube-link="https://www.youtube.com/watch?v=qG5VvYGv4Mg&list=OLAK5uy_nZfcEz24ddD_eWJarHBRU7kpAr2tCtLyU"
-                icon-youtube="/assets/icons/icon_youtube.png"
-                soundcloud-link="https://soundcloud.com/mextasis-825855442/paranoia-mextasis?si=c3edd639b4f54e93aa3efcb704d9262f&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
-                icon-soundcloud="/assets/icons/icon_soundcloud.png"
-                >
-            </lanzamiento-card>
-            <lanzamiento-card 
-                imagen="/assets/lanzamientos/portada1.png"
-                titulo="Paranoia"
-                artista="Mextasis"
-                spotify-link="https://open.spotify.com/intl-es/track/6TArX46XDuYJLiDcpoambA?si=c72c8b4de3514679"
-                icon-spotify="/assets/icons/icon_spotify.png"
-                youtube-link="https://www.youtube.com/watch?v=qG5VvYGv4Mg&list=OLAK5uy_nZfcEz24ddD_eWJarHBRU7kpAr2tCtLyU"
-                icon-youtube="/assets/icons/icon_youtube.png"
-                soundcloud-link="https://soundcloud.com/mextasis-825855442/paranoia-mextasis?si=c3edd639b4f54e93aa3efcb704d9262f&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
-                icon-soundcloud="/assets/icons/icon_soundcloud.png"
-                >
-            </lanzamiento-card>
-            <lanzamiento-card 
-                imagen="/assets/lanzamientos/portada2.png"
-                titulo="Lo Q Queria"
-                artista="Edul"
-                spotify-link="https://open.spotify.com/intl-es/track/6TArX46XDuYJLiDcpoambA?si=c72c8b4de3514679"
-                icon-spotify="/assets/icons/icon_spotify.png"
-                youtube-link="https://www.youtube.com/watch?v=qG5VvYGv4Mg&list=OLAK5uy_nZfcEz24ddD_eWJarHBRU7kpAr2tCtLyU"
-                icon-youtube="/assets/icons/icon_youtube.png"
-                soundcloud-link="https://soundcloud.com/mextasis-825855442/paranoia-mextasis?si=c3edd639b4f54e93aa3efcb704d9262f&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
-                icon-soundcloud="/assets/icons/icon_soundcloud.png"
-                >
-            </lanzamiento-card>
-            <lanzamiento-card 
-                imagen="/assets/lanzamientos/portada3.png"
-                titulo="Estrella Fugaz"
-                artista="Disonante"
-                spotify-link="https://open.spotify.com/intl-es/track/6TArX46XDuYJLiDcpoambA?si=c72c8b4de3514679"
-                icon-spotify="/assets/icons/icon_spotify.png"
-                youtube-link="https://www.youtube.com/watch?v=qG5VvYGv4Mg&list=OLAK5uy_nZfcEz24ddD_eWJarHBRU7kpAr2tCtLyU"
-                icon-youtube="/assets/icons/icon_youtube.png"
-                soundcloud-link="https://soundcloud.com/mextasis-825855442/paranoia-mextasis?si=c3edd639b4f54e93aa3efcb704d9262f&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
-                icon-soundcloud="/assets/icons/icon_soundcloud.png"
-                >
-            </lanzamiento-card>
+            <p style="color: #888; text-align: center;">Cargando estrenos...</p>
         </div>
 
-        <!-- Seccion del video mas reciente del canal de youtube -->
         <div>
             <h2>Último Video</h2>
-            
             <youtube-latest channel-id="UCvs7mDkwgWr3l3MDcdilYeA"></youtube-latest>
         </div>
     </section>
     
     <footer-info></footer-info>
 
-    <script type="module" src="/pages/Principal/script.js"></script>
+    <script type="module" src="pages/Principal/script.js"></script>
+    <!-- <script type="module" src="script.js"></script> --->
 </body>
 </html>
