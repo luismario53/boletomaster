@@ -6,6 +6,7 @@
  */
 
 import Orden from '../models/Orden.js'
+import Mercancia from '../models/Mercancia.js'
 
 class OrdenDAO {
     constructor() {}
@@ -19,7 +20,34 @@ class OrdenDAO {
      */
     async crearOrden(ordenData) {
         try {
-            const orden = new Orden(ordenData)
+            const { idCliente, productos } = ordenData
+            const ids = productos.map(producto => producto._id)
+            const productosDB = await Mercancia.find({ _id: { $in: ids } });
+
+            const cantidadesProductos = new Map(
+                productos.map(p => [p._id, p.cantidad])
+            );
+
+            const ventas = productosDB.map(producto => {
+                const cantidad = cantidadesProductos.get(producto._id.toString())
+                return {
+                    tipoProducto: producto.tipoProducto,
+                    idProducto: producto._id,
+                    precioVenta: producto.precio,
+                    cantidad: cantidad,
+                    subtotal: producto.precio * cantidad
+                }
+            })
+
+            const total = ventas.reduce((acc, venta) => acc + venta.subtotal, 0)
+            const newOrden = {
+                idCliente,
+                fecha: new Date(),
+                total: total,
+                iva: total * 0.16,
+                ordenDetalle: ventas
+            }
+            const orden = new Orden(newOrden)
             return await orden.save()
         } catch (error) {
             throw new Error(`Error al crear orden: ${error.message}`)
@@ -44,7 +72,8 @@ class OrdenDAO {
             // Agrega los ítems al detalle
             orden.ordenDetalle.push(
                 ...items.map(item => ({
-                    idItem: item.idItem,
+                    tipoProducto: item.tipoProducto,
+                    idProducto: item.idProducto,
                     precioVenta: item.precioVenta,
                     cantidad: item.cantidad,
                     subtotal: item.precioVenta * item.cantidad

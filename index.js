@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors";      
+import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import api from "./routes/api.js";
@@ -17,6 +17,10 @@ app.use("/api", api);
 dotenv.config({ path: './variable.env' })
 
 app.use(express.static(path.join(__dirname, "src")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "src/pages/Principal/main.html"));
+});
 
 app.get("/principal", (req, res) => {
   res.sendFile(path.join(__dirname, "src/pages/Principal/main.html"));

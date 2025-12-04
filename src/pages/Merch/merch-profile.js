@@ -1,7 +1,7 @@
 import { HeaderComponent } from "../../../components/header/header.js";
 import { FooterComponent } from "../../../components/footer/footer.js";
 
-import { agregarAlCarrito, obtenerCarrito, obtenerTotal } from "../../utils/carrito.js";
+import { agregarAlCarrito, obtenerCarrito, obtenerTotal, vaciarCarrito} from "../../utils/carrito.js";
 
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
@@ -114,6 +114,7 @@ async function renderizarProducto(idMerch) {
                         : `<p class="stock-ok">En Stock</p>`
                     }
                     <button class="btn-buy">AGREGAR AL CARRITO</button>
+                    <button class="btn-buy2" onclick="crearCompra()">SIMULAR COMPRA</button>
                 </div>
 
                 <div class="description-section">
@@ -140,7 +141,7 @@ async function renderizarProducto(idMerch) {
         // revisar funcion para quitarla por protegerPagina
         buyBtn.addEventListener('click', () => {
             // A) Validar Sesión
-            const usuarioSesion = localStorage.getItem('usuario');
+            const usuarioSesion = localStorage.getItem('usuario_sonicolirio');
             
             if (!usuarioSesion) {
                 // Si NO hay sesión, mostramos mensaje y detenemos.

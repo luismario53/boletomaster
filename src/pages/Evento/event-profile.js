@@ -1,8 +1,13 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
+import { obtenerUsuario } from '../../utils/fetchConAuth.js'
+import { ArtistCardComponent } from "../../components/artist/artist-card.js";
+import { formatearFechaInput, formatearFechaDisplay } from "../../utils/fechaFormateada.js"
 
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
+window.customElements.define('artist-card', ArtistCardComponent);
+
 
 // Variables globales para la galería
 let currentImageIndex = 0;
@@ -59,10 +64,8 @@ async function renderizarEvento(idEvento, container) {
             return;
         }
 
-        console.log(data)
-
-        const { titulo, precio, moneda, imagenes, descripcion, lugar, direccion, stock, fecha, hora } = data
-
+        const { titulo, precio, moneda, imagenes, descripcion, lugar, direccion, stock, fecha, hora, artistas } = data
+        const fechaFormateada = formatearFechaInput(fecha)
         // Guardamos las imágenes en la variable global para usarla en las flechas
         currentEventImages = imagenes || [];
 
@@ -103,7 +106,7 @@ async function renderizarEvento(idEvento, container) {
                 </div>
 
                 <div class="info-grid">
-                    <p><strong> FECHA:</strong> ${fecha} | ${hora}</p>
+                    <p><strong> FECHA:</strong> ${fechaFormateada} | ${hora}</p>
                     <p><strong> LUGAR:</strong> ${lugar}</p>
                     <p class="address"><small>${direccion}</small></p>
                 </div>
@@ -119,13 +122,35 @@ async function renderizarEvento(idEvento, container) {
             </div>
         `;
 
+        // Mostramos artistas del evento
+        const artistaContainer = document.getElementById('merch-container');
+        artistaContainer.innerHTML = ''; 
+
+
+        artistas.forEach(artista => {
+            // Desestructuración segura (por si imagenes no existe)
+            const { _id, nombre, imagenes } = artista;
+            const { perfil } = imagenes
+
+            let cleanImg = perfil.replace(/\\/g, '/');
+            if (!cleanImg.startsWith('/') && !cleanImg.startsWith('http')) cleanImg = '/' + cleanImg;
+
+            const card = document.createElement('artist-card');
+
+            card.setAttribute('id', _id);
+            card.setAttribute('nombre', nombre);
+            card.setAttribute('imagen', perfil);
+
+            artistaContainer.appendChild(card);
+        });
+
         // ==========================================
         // 🔒 LÓGICA DE VALIDACIÓN DE SESIÓN (NUEVO)
         // ==========================================
         const buyBtn = container.querySelector('.btn-buy');
         
         buyBtn.addEventListener('click', () => {
-            const usuarioSesion = localStorage.getItem('usuario');
+            const usuarioSesion = obtenerUsuario()
             
             if (!usuarioSesion) {
                 const irALogin = confirm("🔒 Para comprar boletos necesitas iniciar sesión.\n\n¿Deseas ir a la página de inicio de sesión ahora?");

@@ -37,11 +37,11 @@ async function cargarArtistasCheckboxes() {
         }
 
         artistas.forEach(artista => {
-            const div = document.createElement('div');
+            const div = document.createElement('label');
             div.className = 'checkbox-item';
             div.innerHTML = `
                 <input type="checkbox" id="art-${artista._id}" value="${artista._id}" class="artista-check">
-                <label for="art-${artista._id}">${artista.nombre}</label>
+                <label>${artista.nombre}</label>
             `;
             container.appendChild(div);
         });

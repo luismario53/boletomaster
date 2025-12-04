@@ -17,6 +17,28 @@ body {
     align-items: flex-start; /* Alineado arriba, no centrado vertical */
 }
 
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto 50px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 2rem;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+
 /* REDUCCIÓN DE TAMAÑO: Ancho máximo 1000px en lugar de 1200px */
 .product-container {
     display: grid;

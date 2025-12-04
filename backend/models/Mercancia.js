@@ -41,6 +41,11 @@ const mercanciaSchema = new mongoose.Schema({
         trim: true,
         maxlength: 300
     }],
+    tipoProducto: {
+        type: String,
+        trim: true,
+        maxLength: 20
+    },
     tallas: [{
         type: String,
         trim: true,
