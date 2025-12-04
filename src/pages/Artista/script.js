@@ -1,188 +1,148 @@
-import { HeaderComponent } from "../../../components/header/header.js"
-import { FooterComponent } from "../../../components/footer/footer.js"
-import { CarouselComponent } from "../../../components/carousel/carousel.js"
-import { LanzamientoComponent } from "../../../components/lanzamientos/lanzamiento.js"
+import { HeaderComponent } from "../../components/header/header.js";
+import { FooterComponent } from "../../components/footer/footer.js";
+import { CarouselComponent } from "../../components/carousel/carousel.js";
+import { LanzamientoComponent } from "../../components/lanzamientos/lanzamiento.js";
+import { MerchCardComponent } from "../../components/merch/merch-card.js";
 
-// 1. IMPORTAR COMPONENTE DE MERCH
-import { MerchCardComponent } from "../../components/merch/merch-card.js"
-
-window.customElements.define('header-info', HeaderComponent)
-window.customElements.define('footer-info', FooterComponent)
-window.customElements.define('carousel-info', CarouselComponent)
-window.customElements.define('lanzamiento-card', LanzamientoComponent)
-
-// 2. REGISTRAR COMPONENTE DE MERCH
-window.customElements.define('merch-card', MerchCardComponent)
-
+window.customElements.define('header-info', HeaderComponent);
+window.customElements.define('footer-info', FooterComponent);
+window.customElements.define('carousel-info', CarouselComponent);
+window.customElements.define('lanzamiento-card', LanzamientoComponent);
+window.customElements.define('merch-card', MerchCardComponent);
 
 document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search)
-    const idArtista = params.get('id')
+    const params = new URLSearchParams(window.location.search);
+    const artistId = params.get('id');
 
-    console.log(idArtista)
-    if (idArtista) {
-        renderizarPerfilArtista(idArtista)
+    if (artistId) {
+        renderizarPerfilArtista(artistId);
     } else {
-        document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado</h1>'
+        document.querySelector('.main-content').innerHTML = '<h1>Artista no especificado</h1>';
     }
-})
+});
 
-async function renderizarPerfilArtista(idArtista) {
-    
-    const mockDB = {
-        "692ddf5b390fa073d5c24ed2": {
-            nombre: "MEXTASIS",
-            imgPortada: "/assets/baner.png", 
-            redes: [
-                { icon: "/assets/icons/icon_spotify.png", link: "https://open.spotify.com/intl-es/artist/42SJ61ThHGPtZC7RT9cWyA" },
-                { icon: "/assets/icons/icon_instagram.png", link: "https://www.instagram.com/mex_tasis/" }
-            ],
-
-            discografia: [
-                { 
-                    titulo: "Paranoia", 
-                    artista: "Mextasis",
-                    imagen: "/assets/lanzamientos/portada1.png",
-                    spotify: "http://spotify.com...",
-                    iconSpotify: "",
-                    youtube: "http://youtube.com...",
-                    iconYoutube: "/assets/icons/icon_youtube.png"
-                },
-                { 
-                    titulo: "Quebranto", 
-                    artista: "Mextasis",
-                    imagen: "/assets/lanzamientos/portada4.jpg",
-                    spotify: "http://spotify.com...",
-                    iconSpotify: "/assets/icons/icon_spotify.png",
-                    youtube: "http://youtube.com...",
-                    iconYoutube: "/assets/icons/icon_youtube.png"
-                }
-            ],
-
-            // 3. DATOS DE MERCH
-            merch: [
-                {
-                    _id: "m1", // ID para ir al perfil del producto
-                    nombre: "Camiseta Oficial",
-                    imagen: "/assets/merch/merch1.jpg",
-                    precio: "$350 MXN"
-                }
-            ],
-            
-            eventosImgs: [
-                 "/assets/eventos/evento1.png",
-                 "/assets/eventos/evento2.png"
-            ],
-            
-            bioImg: "/assets/perfil.png", 
-            bioDescripcion: `
-                <p>DESDE LAS AULAS DE SECUNDARIA EN CIUDAD OBREGÓN, SONORA, HASTA LOS ESCENARIOS DONDE LA PASIÓN COBRA VIDA. MEXTASIS ES MÁS QUE UNA BANDA ES EL ECO DE UNA AMISTAD FORJADA A LO LARGO DE CASI UNA DÉCADA.</p>
-                <p>MEXTASIS ES UNA AVALANCHA DE EMOCIONES, UNA ENERGÍA IMPARABLE QUE SE ALIMENTA DE LA CURIOSIDAD Y LA PASIÓN POR EXPLORAR NUEVOS SONIDOS. CADA CANCIÓN ES UN TESTIMONIO DE SU CRECIMIENTO, CADA ACORDE UNA PROMESA DE QUE LO MEJOR ESTÁ AÚN POR VENIR.</p>
-                <p>BIENVENIDOS A SU HISTORIA. BIENVENIDOS A MEXTASIS.</p>
-            `
-        }
-    }
-
+async function renderizarPerfilArtista(id) {
     try {
-        const response = await fetch(`/api/usuarios/${idArtista}`)
-        const data = await response.json()
+        // --- A. CARGAR DATOS DEL ARTISTA (Info Básica) ---
+        const response = await fetch(`http://localhost:5000/api/usuarios/${id}`);
+        const datos = await response.json();
 
         if (!response.ok) {
-            document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado en la base de datos.</h1>'
-            console.error(data)
-            alert(data.error || data.message || "Ocurrió un error inesperado")
-            return
-        }
-        
-        if (!data) {
-            document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado en la base de datos.</h1>'
-            return
+            document.querySelector('.main-content').innerHTML = `<h1>Error: ${datos.mensaje || "Artista no encontrado"}</h1>`;
+            return;
         }
 
-        const { imagenes, redesSociales, nombre, merch, biografia} = data
-        const { perfil, banner } = imagenes
-        const { instagram, spotify } = redesSociales
+        // Sanitizar datos básicos
+        const imgPerfil = datos.imagenes?.perfil || "/assets/usuario.png";
+        const imgBanner = datos.imagenes?.banner || "/assets/baner.png";
+        const instagramLink = datos.redesSociales?.instagram || "#";
+        const spotifyLink = datos.redesSociales?.spotify || "#";
+        const bio = datos.biografia || "Información no disponible.";
 
-        // --- RENDER HERO ---
-        const heroSection = document.getElementById('hero-section')
-        let redesHTML = `
-            <a href="${instagram}" target="_blank"><img src="/assets/icons/icon_instagram.png" alt="Red Social"></a>
-            <a href="${spotify}" target="_blank"><img src="/assets/icons/icon_spotify.png" alt="Red Social"></a>
-        `
+        // 1. RENDER HERO
+        const heroSection = document.getElementById('hero-section');
+        let redesHTML = '';
+        if (datos.redesSociales?.spotify) redesHTML += `<a href="${spotifyLink}" target="_blank"><img src="/assets/icons/icon_spotify.png" alt="Spotify"></a>`;
+        if (datos.redesSociales?.instagram) redesHTML += `<a href="${instagramLink}" target="_blank"><img src="/assets/icons/icon_instagram.png" alt="Instagram"></a>`;
+
         heroSection.innerHTML = `
-            <img src="${banner}" alt="${nombre}" class="hero-bg">
+            <img src="${imgBanner}" alt="${datos.nombre}" class="hero-bg">
             <div class="hero-overlay">
-                <h1 class="artist-name-hero">${nombre}</h1>
-                <div class="hero-socials">
-                    ${redesHTML}
-                </div>
+                <h1 class="artist-name-hero">${datos.nombre}</h1>
+                <div class="hero-socials">${redesHTML}</div>
             </div>
-        `
+        `;
 
-        // render discografia
+        // --- B. CARGAR LANZAMIENTOS REALES (NUEVO) ---
+        console.log("🎵 Buscando lanzamientos para:", id);
+        
+        // Petición a la colección de lanzamientos
+        const lanzamientosResponse = await fetch(`http://localhost:5000/api/lanzamientos/artista/${id}`);
+        const lanzamientosData = await lanzamientosResponse.json();
 
+        // 2. RENDER DISCOGRAFÍA
+        const discographyContainer = document.getElementById('discography-container');
+        discographyContainer.innerHTML = ''; 
 
-        // 4. RENDER MERCH (NUEVA LÓGICA)
-        const merchContainer = document.getElementById('merch-container')
-        if (merch && merch.length > 0) {
-            merch.forEach(producto => {
-                const { _id, nombre, imagenes, precio } = producto
+        if (lanzamientosResponse.ok && lanzamientosData.length > 0) {
+            lanzamientosData.forEach(disco => {
+                // Sanitizar imagen
+                let rawImg = disco.imagen || "/assets/lanzamientos/portada1.png";
+                let cleanImg = rawImg.replace(/\\/g, '/');
+                if (!cleanImg.startsWith('/') && !cleanImg.startsWith('http')) cleanImg = '/' + cleanImg;
 
-                const card = document.createElement('merch-card')
-                card.setAttribute('id', _id)
-                card.setAttribute('nombre', nombre)
-                card.setAttribute('imagen', imagenes[0])
-                card.setAttribute('precio', `$ ${precio}`)
+                const card = document.createElement('lanzamiento-card');
+                card.setAttribute('titulo', disco.titulo);
+                card.setAttribute('artista', datos.nombre);
+                card.setAttribute('imagen', cleanImg);
+                
+                if (disco.spotify) {
+                    card.setAttribute('spotify-link', disco.spotify);
+                    card.setAttribute('icon-spotify', '/assets/icons/icon_spotify.png');
+                }
+                if (disco.youtube) {
+                    card.setAttribute('youtube-link', disco.youtube);
+                    card.setAttribute('icon-youtube', '/assets/icons/icon_youtube.png');
+                }
 
-                merchContainer.appendChild(card)
-            })
+                discographyContainer.appendChild(card);
+            });
         } else {
-            merchContainer.innerHTML = '<p style="color:white opacity:0.6">Próximamente mercancía oficial.</p>'
+            discographyContainer.innerHTML = '<p style="color:#aaa">No hay lanzamientos registrados.</p>';
         }
 
-        // --- RENDER EVENTOS ---
-        const eventsContainer = document.getElementById('events-container')
-        const carousel = document.createElement('carousel-info')
-        eventsContainer.appendChild(carousel)
+        // 3. RENDER EVENTOS (Carrusel Filtrado)
+        const eventsContainer = document.getElementById('events-container');
+        eventsContainer.innerHTML = ''; 
 
-        // --- RENDER BIO ---
-        const bioSection = document.getElementById('bio-section')
+        const carousel = document.createElement('carousel-info');
+        
+        // PASAMOS EL ID DEL ARTISTA PARA FILTRAR
+        carousel.setAttribute('filtro-artista', id); 
+        
+        eventsContainer.appendChild(carousel);
+
+        // 4. RENDER BIO
+        const bioSection = document.getElementById('bio-section');
         bioSection.innerHTML = `
             <div class="bio-left-col">
-                <img src="${perfil}" alt="Foto Biografía ${nombre}">
+                <img src="${imgPerfil}" alt="Foto ${datos.nombre}" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
             </div>
             <div class="bio-right-col">
                 <div class="bio-text-content">
-                    ${biografia}
+                    <h3 style="color:#F8D62C; margin-bottom:20px;">BIOGRAFÍA</h3>
+                    <p>${bio}</p>
                 </div>
             </div>
-        `
-    
-        
-    } catch (error) {
-        document.querySelector('.main-content').innerHTML = '<h1>Artista no encontrado en la base de datos.</h1>'
-        console.error("Error de conexión:", error)
-        alert("Error de conexión con el servidor")
-    }
-    
-    const datos = mockDB[idArtista]
-    // --- RENDER DISCOGRAFIA ---
-    const discographyContainer = document.getElementById('discography-container')
-    datos.discografia.forEach(disco => {
-        const card = document.createElement('lanzamiento-card')
-        card.setAttribute('titulo', disco.titulo)
-        card.setAttribute('artista', disco.artista)
-        card.setAttribute('imagen', disco.imagen)
-        if(disco.spotify) {
-            card.setAttribute('spotify-link', disco.spotify)
-            card.setAttribute('icon-spotify', disco.iconSpotify)
-        }
-        if(disco.youtube) {
-            card.setAttribute('youtube-link', disco.youtube)
-            card.setAttribute('icon-youtube', disco.iconYoutube)
-        }
-        discographyContainer.appendChild(card)
-    })
+        `;
 
-    
+        // --- C. CARGAR MERCH REAL ---
+        console.log("🔍 Buscando merch para:", id);
+        const merchResponse = await fetch(`http://localhost:5000/api/merch/artista/${id}`);
+        const merchData = await merchResponse.json();
+        
+        const merchContainer = document.getElementById('merch-container');
+        merchContainer.innerHTML = ''; 
+
+        if (merchResponse.ok && merchData.length > 0) {
+            merchData.forEach(prod => {
+                let rawImg = (prod.imagenes && prod.imagenes.length > 0) ? prod.imagenes[0] : '/assets/merch/merch1.png';
+                let cleanImg = rawImg.replace(/\\/g, '/');
+                if (!cleanImg.startsWith('/') && !cleanImg.startsWith('http')) cleanImg = '/' + cleanImg;
+                
+                const card = document.createElement('merch-card');
+                card.setAttribute('id', prod._id);
+                card.setAttribute('nombre', prod.nombre);
+                card.setAttribute('imagen', cleanImg);
+                card.setAttribute('precio', `$${prod.precio} MXN`);
+                
+                merchContainer.appendChild(card);
+            });
+        } else {
+            merchContainer.innerHTML = '<p style="color:white; opacity:0.6;">Este artista aún no tiene mercancía disponible.</p>';
+        }
+
+    } catch (error) {
+        console.error("Error al cargar perfil:", error);
+    }
 }

@@ -1,93 +1,106 @@
-import EventoDAO from "../dao/EventoDAO.js";
+import Evento from "../models/Evento.js";
 
-class EventoController {
+const EventoController = {
 
-    async crearEvento(req, res) {
-        try {
-            const evento = req.body;
-            const nuevoEvento = await EventoDAO.crearEvento(evento);
-            res.status(201).json({
-                mensaje: "Evento creado correctamente",
-                evento: nuevoEvento
-            });
-        } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al crear el evento",
-                error: error.message
-            });
-        }
+  // POST /api/eventos
+  crearEvento: async (req, res) => {
+    try {
+      console.log("Creando evento. Lineup:", req.body.artistas);
+      
+      const evento = new Evento(req.body);
+      
+      // Si el middleware de auth guardó el usuario, lo asignamos como creador
+      if (req.usuario) evento.creador = req.usuario.id;
+
+      await evento.save();
+      
+      res.status(201).json({ 
+          mensaje: "Evento creado correctamente", 
+          evento 
+      });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ mensaje: "Error al crear el evento", error: error.message });
     }
+  },
 
-    async obtenerEventos(req, res) {
-        try {
-            const eventos = await EventoDAO.obtenerTodosLosEventos();
-            res.status(200).json(eventos);
-        } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener los eventos",
-                error: error.message
-            });
-        }
+  // GET /api/eventos (Para el Home)
+  obtenerEventos: async (req, res) => {
+    try {
+      // .populate('artistas') sirve para traer el nombre del artista en lugar de solo su ID
+      const eventos = await Evento.find().populate('artistas', 'nombre imagenes');
+      res.status(200).json(eventos);
+    } catch (error) {
+      res.status(500).json({ mensaje: "Error al obtener los eventos", error: error.message });
     }
+  },
 
-    async obtenerEventoPorId(req, res) {
-        try {
-            const { id } = req.params;
-            const evento = await EventoDAO.obtenerEventoPorId(id);
+  // GET /api/eventos/:id (Para el Perfil del Evento)
+  obtenerEventoPorId: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const evento = await Evento.findById(id).populate('artistas', 'nombre imagenes biografia');
 
-            if (!evento) {
-                return res.status(404).json({ mensaje: "Evento no encontrado" });
-            }
+      if (!evento) {
+        return res.status(404).json({ mensaje: "Evento no encontrado" });
+      }
 
-            res.status(200).json(evento);
-        } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener el evento",
-                error: error.message
-            });
-        }
+      res.status(200).json(evento);
+    } catch (error) {
+      res.status(500).json({ mensaje: "Error al obtener el evento", error: error.message });
     }
+  },
 
-    async actualizarEvento(req, res) {
-        try {
-            const { id } = req.params;
-            const datosActualizados = req.body;
+  // === NUEVO: OBTENER EVENTOS DE UN ARTISTA ESPECÍFICO ===
+  // GET /api/eventos/artista/:idArtista
+  obtenerEventosPorArtista: async (req, res) => {
+      try {
+          const { idArtista } = req.params;
+          console.log("🔍 Buscando eventos donde participe artista:", idArtista);
 
-            const eventoActualizado = await EventoDAO.actualizarEvento(id, datosActualizados);
+          // Mongo es inteligente: Si 'artistas' es un array, .find busca si el ID está dentro
+          const eventos = await Evento.find({ artistas: idArtista });
+          
+          res.status(200).json(eventos);
+      } catch (error) {
+          res.status(500).json({ mensaje: "Error al buscar eventos del artista", error: error.message });
+      }
+  },
 
-            if (!eventoActualizado) {
-                return res.status(404).json({ mensaje: "Evento no encontrado" });
-            }
+  // PUT /api/eventos/:id
+  actualizarEvento: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const eventoActualizado = await Evento.findByIdAndUpdate(id, req.body, { new: true });
 
-            res.status(200).json({
-                mensaje: "Evento actualizado correctamente",
-                evento: eventoActualizado
-            });
-        } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al actualizar el evento",
-                error: error.message
-            });
-        }
+      if (!eventoActualizado) {
+        return res.status(404).json({ mensaje: "Evento no encontrado" });
+      }
+
+      res.status(200).json({ 
+          mensaje: "Evento actualizado correctamente", 
+          evento: eventoActualizado 
+      });
+    } catch (error) {
+      res.status(500).json({ mensaje: "Error al actualizar el evento", error: error.message });
     }
+  },
 
-    async eliminarEvento(req, res) {
-        try {
-            const { id } = req.params;
-            const eliminado = await EventoDAO.eliminarEvento(id);
+  // DELETE /api/eventos/:id
+  eliminarEvento: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const eliminado = await Evento.findByIdAndDelete(id);
 
-            if (!eliminado) {
-                return res.status(404).json({ mensaje: "Evento no encontrado" });
-            }
+      if (!eliminado) {
+        return res.status(404).json({ mensaje: "Evento no encontrado" });
+      }
 
-            res.status(200).json({ mensaje: "Evento eliminado correctamente" });
-        } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al eliminar el evento",
-                error: error.message
-            });
-        }
+      res.status(200).json({ mensaje: "Evento eliminado correctamente" });
+    } catch (error) {
+      res.status(500).json({ mensaje: "Error al eliminar el evento", error: error.message });
     }
-}
+  }
+};
 
-export default new EventoController();
+export default EventoController;

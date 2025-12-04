@@ -12,8 +12,10 @@ export class HeaderComponent extends HTMLElement {
     #render(shadow) {
         // --- RUTAS DE RECURSOS ---
         const logoURL = new URL('/assets/logo.jpg', import.meta.url).href;
+        const userImgURL = "/assets/usuario.png"; 
         
         // --- RUTAS DE NAVEGACIÓN ---
+        // (Ajustadas sin /src/ como te funcionó antes)
         const homeURL = "/pages/Principal/main.html";
         const artistasURL = "/pages/Artistas/artists.html";
         const eventosURL = "/pages/Eventos/events.html";
@@ -22,26 +24,34 @@ export class HeaderComponent extends HTMLElement {
 
         const loginURL = "/pages/Login/login.html";
         const userProfileURL = "/pages/Usuario/usuario.html";
-        const userImgURL = "/assets/usuario.png"; 
-
-        const artistaRegister = "/pages/ArtistaRegister/artista-register.html"; 
-        const eventoRegister = "/pages/EventoRegister/evento-register.html"; 
-        const merchRegister = "/pages/MerchRegister/merch-register.html"; 
 
         // --- LÓGICA DE SESIÓN ---
-        const usuarioSesion = localStorage.getItem('usuario');
+        
+        // 1. IMPORTANTE: Usar la misma clave que en login.js ('usuario_sonicolirio')
+        let usuarioSesion = localStorage.getItem('usuario_sonicolirio');
+        
+        // Debugging: Mira la consola del navegador para ver esto
+        console.log("Header buscando sesión:", usuarioSesion);
+
+        // 2. Limpieza de basura (si se guardó "undefined" o "null" como texto)
+        if (usuarioSesion === "undefined" || usuarioSesion === "null") {
+            usuarioSesion = null;
+            localStorage.removeItem('usuario_sonicolirio');
+        }
         
         let authHTML = '';
 
         if (usuarioSesion) {
-            // CAMBIO: Envolvemos la imagen en un enlace <a>
+            // CASO: HAY SESIÓN -> Mostrar Foto
+            console.log("✅ Sesión detectada. Mostrando avatar.");
             authHTML = `
                 <a href="${userProfileURL}" class="user-profile-link">
                     <img src="${userImgURL}" alt="Usuario" class="user-avatar" title="Ir a mi perfil">
                 </a>
             `;
         } else {
-            // ... (el botón de iniciar sesión sigue igual) ...
+            // CASO: NO HAY SESIÓN -> Mostrar Botón
+            console.log("❌ No hay sesión. Mostrando botón login.");
             authHTML = `
                 <a href="${loginURL}" class="login-btn">INICIAR SESIÓN</a>
             `;
@@ -58,8 +68,8 @@ export class HeaderComponent extends HTMLElement {
                     <nav class="nav-menu">
                         <a href="${artistasURL}">ARTISTAS</a>
                         <a href="${eventosURL}">EVENTOS</a>
-                        <a href="${galeriaURL}">GALERÍA</a>
                         <a href="${tiendaURL}">MERCH</a>
+                        <a href="${galeriaURL}">GALERÍA</a>
                     </nav>
 
                     <div class="auth-section">

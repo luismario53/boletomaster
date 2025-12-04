@@ -1,93 +1,82 @@
-import GaleriaDAO from "../dao/GaleriaDAO.js";
+import Galeria from '../models/Galeria.js'; // Importamos el modelo directo
 
-class GaleriaController {
+const GaleriaController = {
 
-    async crearGaleria(req, res) {
+    // crearGaleria
+    crearGaleria: async (req, res) => {
         try {
-            const galeria = req.body;
-            const nuevoGaleria = await GaleriaDAO.crearGaleria(galeria);
-            res.status(201).json({
-                mensaje: "Galeria creado correctamente",
-                galeria: nuevoGaleria
+            console.log("📷 Creando galería:", req.body);
+            const nuevaGaleria = new Galeria(req.body);
+            await nuevaGaleria.save();
+            
+            res.status(201).json({ 
+                mensaje: "Galería creada correctamente", 
+                galeria: nuevaGaleria 
             });
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al crear galeria",
-                error: error.message
-            });
+            console.error(error);
+            res.status(500).json({ mensaje: "Error al crear galería", error: error.message });
         }
-    }
+    },
 
-    async obtenerGalerias(req, res) {
+    // obtenerGalerias
+    obtenerGalerias: async (req, res) => {
         try {
-            const galerias = await GaleriaDAO.obtenerTodasLasGalerias();
+            const galerias = await Galeria.find().sort({ createdAt: -1 }); // Las más nuevas primero
             res.status(200).json(galerias);
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener los galerias",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al obtener galerías", error: error.message });
         }
-    }
+    },
 
-    async obtenerGaleriaPorId(req, res) {
+    // obtenerGaleriaPorId
+    obtenerGaleriaPorId: async (req, res) => {
         try {
             const { id } = req.params;
-            const galeria = await GaleriaDAO.obtenerGaleriaPorId(id);
+            const galeria = await Galeria.findById(id);
 
             if (!galeria) {
-                return res.status(404).json({ mensaje: "Galeria no encontrado" });
+                return res.status(404).json({ mensaje: "Galería no encontrada" });
             }
-
             res.status(200).json(galeria);
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener galeria",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al obtener galería", error: error.message });
         }
-    }
+    },
 
-    async actualizarGaleria(req, res) {
+    // actualizarGaleria
+    actualizarGaleria: async (req, res) => {
         try {
             const { id } = req.params;
-            const datosActualizados = req.body;
+            const galeriaActualizada = await Galeria.findByIdAndUpdate(id, req.body, { new: true });
 
-            const galeriaActualizado = await GaleriaDAO.actualizarGaleria(id, datosActualizados);
-
-            if (!galeriaActualizado) {
-                return res.status(404).json({ mensaje: "Galeria no encontrado" });
+            if (!galeriaActualizada) {
+                return res.status(404).json({ mensaje: "Galería no encontrada" });
             }
 
-            res.status(200).json({
-                mensaje: "Galeria actualizado correctamente",
-                galeria: galeriaActualizado
+            res.status(200).json({ 
+                mensaje: "Galería actualizada correctamente", 
+                galeria: galeriaActualizada 
             });
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al actualizar galeria",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al actualizar", error: error.message });
         }
-    }
+    },
 
-    async eliminarGaleria(req, res) {
+    // eliminarGaleria
+    eliminarGaleria: async (req, res) => {
         try {
             const { id } = req.params;
-            const eliminado = await GaleriaDAO.eliminarGaleria(id);
+            const eliminado = await Galeria.findByIdAndDelete(id);
 
             if (!eliminado) {
-                return res.status(404).json({ mensaje: "Galeria no encontrado" });
+                return res.status(404).json({ mensaje: "Galería no encontrada" });
             }
-
-            res.status(200).json({ mensaje: "Galeria eliminado correctamente" });
+            res.status(200).json({ mensaje: "Galería eliminada correctamente" });
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al eliminar galeria",
-                error: error.message
-            });
+            res.status(500).json({ mensaje: "Error al eliminar", error: error.message });
         }
     }
-}
+};
 
-export default new GaleriaController();
+export default GaleriaController;
