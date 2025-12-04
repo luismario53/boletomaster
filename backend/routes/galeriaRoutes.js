@@ -1,14 +1,33 @@
 import express from "express";
-import GaleriaController from "../controllers/GaleriaController.js";
-import { verificarAuth, verificarRol } from '../middleware/auth.js'
-import { rolesPermitidos } from '../utils/rolesPermitidos.js'
+import GaleriaController from "../controllers/GaleriaController.js"; // Fíjate que ahora importamos el objeto directo
+import { verificarAuth, verificarRol } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post("/", verificarAuth, verificarRol(rolesPermitidos), GaleriaController.crearGaleria);
+// 1. CREAR (Protegido)
+router.post("/", 
+    verificarAuth, 
+    // AGREGAMOS 'ORGANIZADOR'
+    verificarRol(['ADMIN', 'ADMINISTRADOR', 'ORGANIZADOR']), 
+    GaleriaController.crearGaleria
+);
+
+// 2. LEER (Público)
 router.get("/", GaleriaController.obtenerGalerias);
 router.get("/:id", GaleriaController.obtenerGaleriaPorId);
-router.put("/:id", verificarAuth, verificarRol(rolesPermitidos), GaleriaController.actualizarGaleria);
-router.delete("/:id", verificarAuth, verificarRol(rolesPermitidos), GaleriaController.eliminarGaleria);
+
+// 3. ACTUALIZAR (Protegido)
+router.put("/:id", 
+    verificarAuth, 
+    verificarRol(['ADMIN', 'ADMINISTRADOR', 'ORGANIZADOR']), 
+    GaleriaController.actualizarGaleria
+);
+
+// 4. ELIMINAR (Protegido)
+router.delete("/:id", 
+    verificarAuth, 
+    verificarRol(['ADMIN', 'ADMINISTRADOR', 'ORGANIZADOR']), 
+    GaleriaController.eliminarGaleria
+);
 
 export default router;

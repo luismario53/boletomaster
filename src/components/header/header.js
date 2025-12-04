@@ -68,8 +68,8 @@ export class HeaderComponent extends HTMLElement {
                     <nav class="nav-menu">
                         <a href="${artistasURL}">ARTISTAS</a>
                         <a href="${eventosURL}">EVENTOS</a>
-                        <a href="${galeriaURL}">GALERÍA</a>
                         <a href="${tiendaURL}">MERCH</a>
+                        <a href="${galeriaURL}">GALERÍA</a>
                     </nav>
 
                     <div class="auth-section">

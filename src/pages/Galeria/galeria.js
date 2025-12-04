@@ -1,5 +1,6 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
+// Asegúrate que estas utilidades existan, si no, comenta estas líneas
 import { formatearFechaDisplay } from '../../utils/fechaFormateada.js'
 import { toTitleCase } from '../../utils/titleCaseFormat.js'
 
@@ -14,41 +15,69 @@ document.addEventListener('DOMContentLoaded', () => {
 async function renderizarGaleria() {
 
     try {
-        const response = await fetch(`/api/galeria`)
-        const data = await response.json()
+        // CORRECCIÓN 1: URL absoluta al Backend (Puerto 5000)
+        const response = await fetch(`http://localhost:5000/api/galeria`);
+        const data = await response.json();
 
         if (!response.ok) {
-            console.error(data)
-            alert(data.error || data.message || "Ocurrió un error inesperado")
-            return
+            console.error(data);
+            // alert(data.error || "Ocurrió un error inesperado");
+            return;
         }
 
         const container = document.getElementById('gallery-feed');
         container.innerHTML = '';
 
+        if (data.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:white; margin-top:50px;">Aún no hay galerías publicadas.</p>';
+            return;
+        }
+
         data.forEach(album => {
-            const {evento, descripcion, fecha, imagenes } = album
-            const fechaFormateada = toTitleCase(formatearFechaDisplay(fecha))
+            // CORRECCIÓN 2: El campo se llama 'fotos' en tu BD, no 'imagenes'
+            const { evento, descripcion, fecha, fotos } = album;
+
+            // Manejo seguro de fechas (por si la utilidad falla o la fecha viene vacía)
+            let fechaTexto = fecha;
+            try {
+                if (formatearFechaDisplay) {
+                    fechaTexto = toTitleCase(formatearFechaDisplay(fecha));
+                }
+            } catch (e) {
+                console.warn("Error formateando fecha:", e);
+            }
+
             // 1. Crear HTML de las fotos
             let fotosHTML = '';
-            imagenes.forEach(foto => {
-                // Al hacer click, abrimos el Lightbox con la ruta de la foto
-                fotosHTML += `
-                    <div class="photo-item" onclick="abrirLightbox('${foto}', '${evento}')">
-                        <img src="${foto}" alt="${evento}" loading="lazy">
-                        <div class="photo-overlay">
-                            <span>VER FOTO</span>
+            
+            // Verificamos que 'fotos' exista y sea un array
+            if (fotos && Array.isArray(fotos)) {
+                fotos.forEach(fotoRaw => {
+                    
+                    // CORRECCIÓN 3: Sanitizar rutas (Windows \ a Web /)
+                    let cleanSrc = fotoRaw.replace(/\\/g, '/');
+                    if (!cleanSrc.startsWith('/') && !cleanSrc.startsWith('http')) {
+                        cleanSrc = '/' + cleanSrc;
+                    }
+
+                    // Al hacer click, enviamos la url limpia al Lightbox
+                    fotosHTML += `
+                        <div class="photo-item" onclick="abrirLightbox('${cleanSrc}', '${evento}')">
+                            <img src="${cleanSrc}" alt="${evento}" loading="lazy">
+                            <div class="photo-overlay">
+                                <span>VER FOTO</span>
+                            </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
 
             // 2. Crear HTML del Álbum completo
             const albumHTML = `
                 <section class="album-section">
                     <div class="album-header">
                         <h2 class="album-title">${evento}</h2>
-                        <p class="album-date">${fechaFormateada}</p>
+                        <p class="album-date">${fechaTexto}</p>
                         <p class="album-desc">${descripcion}</p>
                     </div>
                     
@@ -62,15 +91,16 @@ async function renderizarGaleria() {
         });
 
     } catch (error) {
-        console.error("Error de conexión:", error)
-        alert("Error de conexión con el servidor")
+        console.error("Error de conexión:", error);
+        // alert("Error de conexión con el servidor");
     }
-
 }
 
 function setupLightbox() {
     const lightbox = document.getElementById('lightbox');
     const closeBtn = document.getElementById('close-lightbox');
+
+    if (!lightbox || !closeBtn) return;
 
     // Cerrar al dar click en la X
     closeBtn.addEventListener('click', () => {
@@ -91,7 +121,9 @@ window.abrirLightbox = function(src, caption) {
     const img = document.getElementById('lightbox-img');
     const text = document.getElementById('lightbox-caption');
 
-    img.src = src;
-    text.innerText = caption;
-    lightbox.classList.remove('hidden');
+    if (lightbox && img && text) {
+        img.src = src;
+        text.innerText = caption;
+        lightbox.classList.remove('hidden');
+    }
 };
