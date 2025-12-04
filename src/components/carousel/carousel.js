@@ -6,84 +6,95 @@ export class CarouselComponent extends HTMLElement {
         this.index = 0;
     }
 
+    // Observamos el atributo 'filtro-artista'
+    static get observedAttributes() {
+        return ['filtro-artista'];
+    }
+
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'open'});
         this.#agregarEstilos(shadow);
-        this.#cargarEventos(shadow);
+        
+        // Obtenemos el atributo si existe
+        const artistaId = this.getAttribute('filtro-artista');
+        this.#cargarEventos(shadow, artistaId);
+    }
+    
+    // Si el atributo cambia dinámicamente
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'filtro-artista' && oldValue !== newValue) {
+            const shadow = this.shadowRoot;
+            if(shadow) {
+                // Limpiar y recargar
+                this.imagenes = [];
+                const container = shadow.querySelector('.eventos-carousel');
+                if(container) container.remove(); 
+                
+                this.#cargarEventos(shadow, newValue);
+            }
+        }
     }
 
-    async #cargarEventos(shadow) {
+    async #cargarEventos(shadow, artistaId = null) {
         try {
-            const response = await fetch('http://localhost:5000/api/eventos');
+            // Lógica de URL Inteligente
+            let url = 'http://localhost:5000/api/eventos';
+            
+            if (artistaId) {
+                console.log("🎡 Carousel filtrando por artista:", artistaId);
+                url = `http://localhost:5000/api/eventos/artista/${artistaId}`;
+            }
+
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.length > 0) {
-                // MAPEO Y LIMPIEZA DE DATOS
                 this.imagenes = data.map(evento => {
-                    // 1. Obtener la ruta cruda
                     let rawSrc = (evento.imagenes && evento.imagenes.length > 0) 
                                  ? evento.imagenes[0] 
-                                 : '/src/assets/eventos/evento1.png';
+                                 : '/assets/eventos/evento1.png';
 
-                    // 2. CORRECCIÓN DE RUTAS (Sanitización)
-                    // Reemplazar todas las barras invertidas '\' por normales '/'
                     let cleanSrc = rawSrc.replace(/\\/g, '/');
-                    
-                    // Asegurar que empiece con '/' para que sea ruta absoluta
-                    // (Evita que se concatene con /pages/Principal/...)
                     if (!cleanSrc.startsWith('/') && !cleanSrc.startsWith('http')) {
                         cleanSrc = '/' + cleanSrc;
                     }
 
-                    return {
-                        id: evento._id, 
-                        src: cleanSrc
-                    };
+                    return { id: evento._id, src: cleanSrc };
                 });
 
                 this.#render(shadow);
                 this.#agregarEventos(shadow);
             } else {
-                shadow.innerHTML = '<div style="height:430px; display:flex; justify-content:center; align-items:center; color:white;">No hay eventos destacados</div>';
+                // Mensaje diferente según si es filtro o no
+                const msg = artistaId 
+                    ? 'Este artista no tiene próximos eventos.' 
+                    : 'No hay eventos destacados.';
+                shadow.innerHTML = `<div style="height:300px; display:flex; justify-content:center; align-items:center; color:#888;">${msg}</div>`;
             }
 
         } catch (error) {
             console.error("Error cargando carousel:", error);
-            shadow.innerHTML = '<div style="height:430px; display:flex; justify-content:center; align-items:center; color:white;">Error al cargar eventos</div>';
         }
     }
 
+    // ... #render, #agregarEventos, #actualizarImagen, #agregarEstilos SE QUEDAN IGUAL ...
+    // (Copia el resto de tu archivo carousel.js original aquí abajo)
     #render(shadow) {
         if (this.imagenes.length === 0) return;
-
         const imagenActual = this.imagenes[0].src;
-
         shadow.innerHTML += `
             <section class="eventos-carousel">
                 <div class="slide-bg"></div>
-
-                <button class="carousel-btn left-btn">
-                    <img src="/assets/icons/arrow_left.png" alt="Anterior">
-                </button>
-
+                <button class="carousel-btn left-btn"><img src="/assets/icons/arrow_left.png"></button>
                 <div class="carousel-slide">
-                    <div class="slides-container">
-                        <img src="${imagenActual}" class="slide-img" alt="Evento destacado">
-                    </div>
+                    <div class="slides-container"><img src="${imagenActual}" class="slide-img"></div>
                     <div class="slide-bg-overlay"></div>
                 </div>
-
-                <button class="carousel-btn right-btn">
-                    <img src="/assets/icons/arrow_right.png" alt="Siguiente">
-                </button>
+                <button class="carousel-btn right-btn"><img src="/assets/icons/arrow_right.png"></button>
             </section>
         `;
-
-        // Aplicar imagen al fondo difuminado
         const bg = shadow.querySelector(".slide-bg");
-        if(bg) {
-            bg.style.backgroundImage = `url('${imagenActual}')`;
-        }
+        if(bg) bg.style.backgroundImage = `url('${imagenActual}')`;
     }
 
     #agregarEventos(shadow) {
@@ -102,7 +113,6 @@ export class CarouselComponent extends HTMLElement {
             this.index = (this.index - 1 + this.imagenes.length) % this.imagenes.length;
             this.#actualizarImagen(shadow);
         });
-
         btnRight.addEventListener("click", () => {
             this.index = (this.index + 1) % this.imagenes.length;
             this.#actualizarImagen(shadow);
@@ -112,24 +122,15 @@ export class CarouselComponent extends HTMLElement {
     #actualizarImagen(shadow) {
         const img = shadow.querySelector(".slide-img");
         const bg = shadow.querySelector(".slide-bg");
-
         if (!img || !bg) return;
-
         const dataActual = this.imagenes[this.index];
-
-        // Fade Out
         img.classList.add("fade-out");
         bg.classList.add("bg-fade-out");
-
         setTimeout(() => {
-            // Cambiar URLs
             img.src = dataActual.src;
             bg.style.backgroundImage = `url('${dataActual.src}')`;
-
-            // Fade In
             img.classList.remove("fade-out");
             bg.classList.remove("bg-fade-out");
-
         }, 300); 
     }
 

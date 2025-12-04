@@ -91,9 +91,15 @@ async function renderizarPerfilArtista(id) {
             discographyContainer.innerHTML = '<p style="color:#aaa">No hay lanzamientos registrados.</p>';
         }
 
-        // 3. RENDER EVENTOS (Carrusel Genérico por ahora)
+        // 3. RENDER EVENTOS (Carrusel Filtrado)
         const eventsContainer = document.getElementById('events-container');
+        eventsContainer.innerHTML = ''; 
+
         const carousel = document.createElement('carousel-info');
+        
+        // PASAMOS EL ID DEL ARTISTA PARA FILTRAR
+        carousel.setAttribute('filtro-artista', id); 
+        
         eventsContainer.appendChild(carousel);
 
         // 4. RENDER BIO
