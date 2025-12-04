@@ -2,10 +2,15 @@
 import mongoose from 'mongoose'
 
 const ordenVentaSchema = new mongoose.Schema({
-    idItem: {
+    tipoProducto: {
+        type: String,
+        required: true,
+        enum: ['Mercancia', 'Boleto']  // los nombres de tus modelos
+    },
+    idProducto: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Item',
-        required: true
+        required: true,
+        refPath: 'tipoProducto'
     },
     precioVenta: {
         type: Number,
@@ -42,6 +47,12 @@ const ordenSchema = new mongoose.Schema({
         required: true
     },
     ordenDetalle: [ordenVentaSchema],
+    // Nuevos campos para PayPal
+    estadoPago: {
+        type: String,
+        enum: ['Pendiente', 'Pagado', 'Cancelado', 'Fallido'],
+        default: 'Pendiente'
+    },
     activo: {
         type: Boolean,
         default: true

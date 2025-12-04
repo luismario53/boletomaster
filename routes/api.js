@@ -6,6 +6,7 @@ import usuarios from './usuariosApi.js'
 import merch from './merchApi.js'
 import eventos from './eventosApi.js'
 import galeria from './galeriaApi.js'
+import ordenes from './ordenesApi.js'
 
 const router = express.Router()
 
@@ -17,6 +18,7 @@ router.use('/usuarios', usuarios)
 router.use('/merch', merch)
 router.use('/eventos', eventos)
 router.use('/galeria', galeria)
+router.use('/ordenes', ordenes)
 
 
 router.get("/live", (req, res) => {

@@ -6,7 +6,10 @@ const MercanciaController = {
     crearMercancia: async (req, res) => {
         try {
             console.log("👕 Creando merch:", req.body);
-            const nuevaMercancia = new Mercancia(req.body);
+            const nuevaMerch = req.body
+
+            nuevaMerch['TipoProducto'] = 'Mercancia'
+            const nuevaMercancia = new Mercancia(nuevaMerch);
             await nuevaMercancia.save();
             
             res.status(201).json({ 
@@ -22,7 +25,7 @@ const MercanciaController = {
     // obtenerTodaLaMercancia
     obtenerTodaLaMercancia: async (req, res) => {
         try {
-            const mercancia = await Mercancia.find(); // Trae todo
+            const mercancia = await Mercancia.find().populate('idArtista'); // Trae todo
             res.status(200).json(mercancia);
         } catch (error) {
             res.status(500).json({ mensaje: "Error al obtener la mercancia", error: error.message });
@@ -48,8 +51,6 @@ const MercanciaController = {
     obtenerMercanciaPorArtista: async (req, res) => {
         try {
             const { artista } = req.params; // El ID que viene en la URL
-            
-            console.log("Backend buscando merch con idArtista:", artista); // <--- DEBUG
 
             // IMPORTANTE: Asegúrate de que en tu Modelo (Mongo) el campo se llame "idArtista"
             const mercancia = await Mercancia.find({ idArtista: artista });

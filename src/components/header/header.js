@@ -20,6 +20,7 @@ export class HeaderComponent extends HTMLElement {
         const artistasURL = "/pages/Artistas/artists.html";
         const eventosURL = "/pages/Eventos/events.html";
         const galeriaURL = "/pages/Galeria/galeria.html";
+        const carritoURL = "/pages/Carrito/carrito.html";
         const tiendaURL = "/pages/Merchs/merchs.html";
 
         const loginURL = "/pages/Login/login.html";
@@ -70,6 +71,7 @@ export class HeaderComponent extends HTMLElement {
                         <a href="${eventosURL}">EVENTOS</a>
                         <a href="${tiendaURL}">MERCH</a>
                         <a href="${galeriaURL}">GALERÍA</a>
+                        <a href="${carritoURL}">CARRITO</a>
                     </nav>
 
                     <div class="auth-section">

@@ -11,6 +11,7 @@ import usuariosRouter from './routes/usuarioRoutes.js'
 import mercanciaRouter from './routes/mercanciaRoutes.js'
 import authRouter from './routes/authRoutes.js'
 import lanzamientoRouter from './routes/LanzamientoRoutes.js';
+import ordenesRouter from './routes/ordenRoutes.js';
 
 conectar()
 
@@ -33,6 +34,8 @@ app.use('/api/usuarios/', usuariosRouter)
 app.use('/api/merch/', mercanciaRouter)
 app.use('/api/auth/', authRouter)
 app.use('/api/lanzamientos/', lanzamientoRouter)
+app.use('/api/ordenes/', ordenesRouter)
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{
