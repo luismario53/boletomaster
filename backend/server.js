@@ -1,10 +1,8 @@
 import express from 'express';
-// import { AppError } from './utils/appError.js';
 import morgan from 'morgan';
-// import jwt from 'jsonwebtoken'
-// import productoRouter from './router/productoRouter.js'
 import { conectar } from './config/db.js'
-// import validateJWT from './utils/ValidateJWT.js'
+// 1. IMPORTAR CORS
+import cors from 'cors'; 
 
 import './models/index.js'
 import eventoRouter from './routes/eventoRoutes.js'
@@ -16,21 +14,17 @@ import authRouter from './routes/authRoutes.js'
 conectar()
 
 const app = express();
-//Middleware para analizar los datos del cuerpo de las solicitudes en formato JSON
-app.use(express.json());
 
-//Configurar el middleware de morgan para el registro de solicitudes en consola
+// 2. USAR CORS (¡Muy importante que esté arriba!)
+// Esto permite que CUALQUIER frontend hable con tu backend.
+app.use(cors()); 
+
+app.use(express.json());
 app.use(morgan('combined'));
 
 app.post('/api/live', (req, res) => {
     return res.status(200).json({message: 'La API esta corriendo y es accesible'})
-
 })
-
-// app.use((req, res, next)=>{
-//     const error = new AppError(`No se ha podido acceder a ${req.originalUrl} en el servidor`, 404);
-//     next(error);
-// });
 
 app.use('/api/galeria/', galeriaRouter)
 app.use('/api/eventos/', eventoRouter)

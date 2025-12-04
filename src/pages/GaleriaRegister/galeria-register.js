@@ -1,10 +1,30 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
-import { fetchConAuth, protegerPagina, obtenerUsuario } from '../../utils/fetchConAuth.js'
 
+// Definimos componentes
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
+// --- 1. PROTECCIÓN DE PÁGINA MANUAL ---
+document.addEventListener('DOMContentLoaded', () => {
+    const usuarioJSON = localStorage.getItem('usuario_sonicolirio');
+    
+    if (!usuarioJSON) {
+        alert("Debes iniciar sesión para acceder aquí.");
+        window.location.href = "/src/pages/Login/login.html";
+        return;
+    }
+
+    const usuario = JSON.parse(usuarioJSON);
+    
+    // Verificar rol
+    if (usuario.tipoUsuario !== 'ORGANIZADOR' && usuario.tipoUsuario !== 'ADMIN') {
+        alert("No tienes permisos para ver esta página.");
+        window.location.href = "/src/pages/Principal/main.html";
+    }
+});
+
+// --- 2. LÓGICA DE INPUTS DINÁMICOS ---
 const container = document.getElementById('photos-container');
 const addBtn = document.getElementById('add-photo-btn');
 
@@ -20,68 +40,72 @@ addBtn.addEventListener('click', () => {
     container.appendChild(div);
 });
 
+// --- 3. GUARDAR GALERÍA ---
 document.getElementById('gallery-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const btn = document.querySelector('.btn-auth');
-    const originalText = btn.innerText
+    const originalText = btn.innerText;
+    
     btn.innerText = "PUBLICANDO...";
     btn.disabled = true;
 
-    // URLs de las fotos
+    // A) Recopilar URLs de las fotos
     const inputs = document.querySelectorAll('.photo-input');
     const imagenesArray = Array.from(inputs)
         .map(input => input.value.trim())
         .filter(url => url !== ""); 
 
+    // Validación mínima
     if (imagenesArray.length === 0) {
         alert("Debes agregar al menos una foto.");
-        btn.innerText = "PUBLICAR GALERÍA";
+        btn.innerText = originalText;
         btn.disabled = false;
         return;
     }
 
+    // B) Construir Objeto
+    // Asegúrate de que tu backend espere "fotos" o "imagenes" en el array
     const nuevaGaleria = {
         evento: document.getElementById('evento').value,
-        fecha: document.getElementById('fecha').value, // YYYY-MM-DD
+        fecha: document.getElementById('fecha').value,
         descripcion: document.getElementById('descripcion').value,
-        imagenes: imagenesArray, // ARRAY CON TODAS LAS FOTOS
+        fotos: imagenesArray, // Enviaremos el array de strings
         createdAt: new Date()
     };
 
-
-    console.log(nuevaGaleria)
+    console.log("📤 Enviando Galería:", nuevaGaleria);
 
     try {
-        const response = await fetchConAuth("/api/galeria", {
+        const token = localStorage.getItem('token');
+
+        // Petición directa al Backend (Puerto 5000)
+        const response = await fetch("http://localhost:5000/api/galeria", {
             method: "POST",
             headers: {
-            "Content-Type": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(nuevaGaleria),
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
-        // ✅ Verificar si la respuesta fue exitosa
         if (!response.ok) {
-            // El servidor devolvió 400, 401, 500, etc.
-            console.error("Ocurrió un error inesperado:", data)
-            alert(data.error || data.message || "Error al registrar artista")
-
-            btn.innerText = originalText
-            btn.disabled = false
-            return
+            console.error("Error servidor:", data);
+            alert(data.error || data.message || "Error al crear la galería");
+            btn.innerText = originalText;
+            btn.disabled = false;
+            return;
         }
 
         alert(`¡Álbum "${nuevaGaleria.evento}" publicado con ${imagenesArray.length} fotos!`);
-        window.location.href = "/pages/Galeria/galeria.html";
+        window.location.href = "/src/pages/Galeria/galeria.html";
 
     } catch (error) {
-        btn.innerText = originalText
-        btn.disabled = false
-        console.error("Error de conexión:", error)
-        alert("Error de conexión con el servidor")
+        console.error("Error de conexión:", error);
+        alert("Error de conexión con el servidor (Puerto 5000)");
+        btn.innerText = originalText;
+        btn.disabled = false;
     }
-
 });

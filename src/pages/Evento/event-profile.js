@@ -103,8 +103,8 @@ async function renderizarEvento(idEvento, container) {
                 </div>
 
                 <div class="info-grid">
-                    <p><strong>📅 FECHA:</strong> ${fecha} | ${hora}</p>
-                    <p><strong>📍 LUGAR:</strong> ${lugar}</p>
+                    <p><strong> FECHA:</strong> ${fecha} | ${hora}</p>
+                    <p><strong> LUGAR:</strong> ${lugar}</p>
                     <p class="address"><small>${direccion}</small></p>
                 </div>
 

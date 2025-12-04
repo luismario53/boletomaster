@@ -1,24 +1,47 @@
 import { HeaderComponent } from "../../components/header/header.js";
 import { FooterComponent } from "../../components/footer/footer.js";
-import { fetchConAuth, protegerPaginaPorRol, obtenerUsuario } from '../../utils/fetchConAuth.js'
 
+// Definimos componentes
 window.customElements.define('header-info', HeaderComponent);
 window.customElements.define('footer-info', FooterComponent);
 
-protegerPaginaPorRol()
+// --- 1. PROTECCIÓN DE PÁGINA MANUAL ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Usamos la llave correcta que definimos antes
+    const usuarioJSON = localStorage.getItem('usuario_sonicolirio');
+    
+    if (!usuarioJSON) {
+        alert("Debes iniciar sesión para acceder aquí.");
+        window.location.href = "/pages/Login/login.html";
+        return;
+    }
+
+    const usuario = JSON.parse(usuarioJSON);
+    
+    // Verificar rol (ORGANIZADOR o ADMIN)
+    if (usuario.tipoUsuario !== 'ORGANIZADOR' && usuario.tipoUsuario !== 'ADMIN') {
+        alert("No tienes permisos para ver esta página.");
+        window.location.href = "/pages/Principal/main.html";
+    }
+});
+
+// --- 2. LÓGICA DE REGISTRO ---
 document.getElementById('evento-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const btn = document.querySelector('.btn-auth');
-    const originalText = btn.innerText
+    const originalText = btn.innerText;
+    
     btn.innerText = "PUBLICANDO...";
     btn.disabled = true;
 
+    // Recopilar imágenes
     const imagenesInputs = document.querySelectorAll('.img-input');
     const imagenesArray = Array.from(imagenesInputs)
         .map(input => input.value.trim())
         .filter(url => url !== "");
 
+    // Construir objeto
     const nuevoEvento = {
         titulo: document.getElementById('titulo').value,
         fecha: document.getElementById('fecha').value, // YYYY-MM-DD
@@ -40,37 +63,43 @@ document.getElementById('evento-form').addEventListener('submit', async (e) => {
         createdAt: new Date()
     };
 
-    console.log(nuevoEvento)
+    console.log("📤 Enviando:", nuevoEvento);
 
     try {
-        const response = await fetchConAuth("/api/eventos", {
+        // Recuperar token para autorización
+        const token = localStorage.getItem('token');
+
+        // Petición directa al Backend (Puerto 5000)
+        // Asegúrate de que la ruta en tu backend sea /api/eventos
+        const response = await fetch("http://localhost:5000/api/eventos", {
             method: "POST",
             headers: {
-            "Content-Type": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` // Token en el header
             },
             body: JSON.stringify(nuevoEvento),
-        })
+        });
 
-        const data = await response.json()
+        const data = await response.json();
 
-        // ✅ Verificar si la respuesta fue exitosa
+        // Verificar respuesta
         if (!response.ok) {
-            // El servidor devolvió 400, 401, 500, etc.
-            console.error("Ocurrió un error inesperado:", data)
-            alert(data.error || data.message || "Error al registrar artista")
+            console.error("Error servidor:", data);
+            alert(data.error || data.message || "Error al registrar evento");
 
-            btn.innerText = originalText
-            btn.disabled = false
-            return
+            btn.innerText = originalText;
+            btn.disabled = false;
+            return;
         }
 
+        // Éxito
         alert(`¡Evento "${nuevoEvento.titulo}" creado exitosamente!`);
         window.location.href = "/pages/Eventos/events.html";
 
     } catch (error) {
-        btn.innerText = originalText
-        btn.disabled = false
-        console.error("Error de conexión:", error)
-        alert("Error de conexión con el servidor")
+        console.error("Error de conexión:", error);
+        alert("Error de conexión con el servidor (Puerto 5000)");
+        btn.innerText = originalText;
+        btn.disabled = false;
     }
 });
