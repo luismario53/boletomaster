@@ -1,38 +1,17 @@
+import mongoose from 'mongoose';
 
-import mongoose from 'mongoose'
+const lanzamientoSchema = mongoose.Schema({
+    titulo: { type: String, required: true },
+    imagen: { type: String, required: true },
+    spotify: String,
+    youtube: String,
+    
+    // Relación con el Usuario (Artista)
+    idArtista: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true },
+    nombreArtista: String, // Opcional, pero útil para mostrar rápido
 
-const lanzamientoSchema = new mongoose.Schema({
-    idArtista: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Artista',
-        required: true
-    },
-    nombre: {
-        type: String,
-        required: true
-    },
-    descripcion: {
-        type: String,
-        required: true
-    },
-    imagen: {
-        type: String,
-        required: true
-    },
-    cancion: {
-        type: String,
-        required: true
-    },
-    activo: {
-        type: Boolean,
-        default: true
-    },
-    // fechaLanzamiento: {
-    //     type: Date,
-    //     required: true
-    // }
-}, {
-    timestamps: true
-})
+    createdAt: { type: Date, default: Date.now }
+});
 
-export default mongoose.model('Lanzamiento', lanzamientoSchema)
+const Lanzamiento = mongoose.model('Lanzamiento', lanzamientoSchema);
+export default Lanzamiento;

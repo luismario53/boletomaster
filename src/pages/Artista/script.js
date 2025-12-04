@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function renderizarPerfilArtista(id) {
     try {
-        // --- A. CARGAR DATOS DEL ARTISTA ---
+        // --- A. CARGAR DATOS DEL ARTISTA (Info Básica) ---
         const response = await fetch(`http://localhost:5000/api/usuarios/${id}`);
         const datos = await response.json();
 
@@ -32,18 +32,16 @@ async function renderizarPerfilArtista(id) {
             return;
         }
 
-        // CORRECCIÓN RUTAS (Sin /src)
+        // Sanitizar datos básicos
         const imgPerfil = datos.imagenes?.perfil || "/assets/usuario.png";
         const imgBanner = datos.imagenes?.banner || "/assets/baner.png";
         const instagramLink = datos.redesSociales?.instagram || "#";
         const spotifyLink = datos.redesSociales?.spotify || "#";
-        const discografia = datos.discografia || [];
         const bio = datos.biografia || "Información no disponible.";
 
         // 1. RENDER HERO
         const heroSection = document.getElementById('hero-section');
         let redesHTML = '';
-        // CORRECCIÓN RUTAS ICONOS (Sin /src)
         if (datos.redesSociales?.spotify) redesHTML += `<a href="${spotifyLink}" target="_blank"><img src="/assets/icons/icon_spotify.png" alt="Spotify"></a>`;
         if (datos.redesSociales?.instagram) redesHTML += `<a href="${instagramLink}" target="_blank"><img src="/assets/icons/icon_instagram.png" alt="Instagram"></a>`;
 
@@ -55,23 +53,45 @@ async function renderizarPerfilArtista(id) {
             </div>
         `;
 
+        // --- B. CARGAR LANZAMIENTOS REALES (NUEVO) ---
+        console.log("🎵 Buscando lanzamientos para:", id);
+        
+        // Petición a la colección de lanzamientos
+        const lanzamientosResponse = await fetch(`http://localhost:5000/api/lanzamientos/artista/${id}`);
+        const lanzamientosData = await lanzamientosResponse.json();
+
         // 2. RENDER DISCOGRAFÍA
         const discographyContainer = document.getElementById('discography-container');
         discographyContainer.innerHTML = ''; 
-        if (discografia.length > 0) {
-            discografia.forEach(disco => {
+
+        if (lanzamientosResponse.ok && lanzamientosData.length > 0) {
+            lanzamientosData.forEach(disco => {
+                // Sanitizar imagen
+                let rawImg = disco.imagen || "/assets/lanzamientos/portada1.png";
+                let cleanImg = rawImg.replace(/\\/g, '/');
+                if (!cleanImg.startsWith('/') && !cleanImg.startsWith('http')) cleanImg = '/' + cleanImg;
+
                 const card = document.createElement('lanzamiento-card');
                 card.setAttribute('titulo', disco.titulo);
                 card.setAttribute('artista', datos.nombre);
-                // CORRECCIÓN RUTA (Sin /src)
-                card.setAttribute('imagen', disco.imagen || "/assets/lanzamientos/portada1.png");
+                card.setAttribute('imagen', cleanImg);
+                
+                if (disco.spotify) {
+                    card.setAttribute('spotify-link', disco.spotify);
+                    card.setAttribute('icon-spotify', '/assets/icons/icon_spotify.png');
+                }
+                if (disco.youtube) {
+                    card.setAttribute('youtube-link', disco.youtube);
+                    card.setAttribute('icon-youtube', '/assets/icons/icon_youtube.png');
+                }
+
                 discographyContainer.appendChild(card);
             });
         } else {
             discographyContainer.innerHTML = '<p style="color:#aaa">No hay lanzamientos registrados.</p>';
         }
 
-        // 3. RENDER EVENTOS
+        // 3. RENDER EVENTOS (Carrusel Genérico por ahora)
         const eventsContainer = document.getElementById('events-container');
         const carousel = document.createElement('carousel-info');
         eventsContainer.appendChild(carousel);
@@ -90,29 +110,19 @@ async function renderizarPerfilArtista(id) {
             </div>
         `;
 
-        // --- B. CARGAR MERCH REAL DEL ARTISTA ---
-        console.log("🔍 Buscando merch para Artista ID:", id); // DEBUG
-
+        // --- C. CARGAR MERCH REAL ---
+        console.log("🔍 Buscando merch para:", id);
         const merchResponse = await fetch(`http://localhost:5000/api/merch/artista/${id}`);
         const merchData = await merchResponse.json();
         
-        console.log("📦 Merch encontrada:", merchData); // DEBUG
-
         const merchContainer = document.getElementById('merch-container');
         merchContainer.innerHTML = ''; 
 
         if (merchResponse.ok && merchData.length > 0) {
             merchData.forEach(prod => {
-                // CORRECCIÓN RUTAS MERCH (Sin /src y replace)
                 let rawImg = (prod.imagenes && prod.imagenes.length > 0) ? prod.imagenes[0] : '/assets/merch/merch1.png';
-                // Solo reemplazamos \ por / si viene del backend, si es la default ya está bien
                 let cleanImg = rawImg.replace(/\\/g, '/');
-                
-                // Si no tiene / al principio y no es http, se lo ponemos
                 if (!cleanImg.startsWith('/') && !cleanImg.startsWith('http')) cleanImg = '/' + cleanImg;
-                
-                // Si la ruta ya tenía /src/ y quieres quitarlo, podrías hacer un replace extra, 
-                // pero si viene de la BD déjalo como está guardado.
                 
                 const card = document.createElement('merch-card');
                 card.setAttribute('id', prod._id);

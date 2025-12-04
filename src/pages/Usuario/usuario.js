@@ -33,9 +33,11 @@ function renderizarUsuario(usuario) {
     const container = document.getElementById('profile-content');
 
     // --- BOTONES DE ADMIN ---
+    // ... dentro de renderizarUsuario ...
+
     let adminButtonsHTML = '';
 
-    // Verificamos si es ORGANIZADOR o ADMIN (ajusta según tu BD)
+    // PANEL PARA ORGANIZADORES / ADMINS
     if (usuario.tipoUsuario === 'ORGANIZADOR' || usuario.tipoUsuario === 'ADMIN') {
         const artistaRegister = "/pages/ArtistaRegister/artista-register.html";
         const eventoRegister = "/pages/EventoRegister/evento-register.html";
@@ -46,17 +48,23 @@ function renderizarUsuario(usuario) {
             <div class="admin-panel">
                 <p class="admin-title">PANEL DE GESTIÓN</p>
                 <div class="admin-grid">
-                    <a href="${artistaRegister}" class="admin-btn">
-                        <span></span> Nuevo Artista
-                    </a>
-                    <a href="${eventoRegister}" class="admin-btn">
-                        <span></span> Nuevo Evento
-                    </a>
-                    <a href="${merchRegister}" class="admin-btn">
-                        <span></span> Nueva Merch
-                    </a>
-                    <a href="${galeriaRegister}" class="admin-btn">
-                        <span></span> Nueva Galería
+                    <a href="${artistaRegister}" class="admin-btn"><span></span> Nuevo Artista</a>
+                    <a href="${eventoRegister}" class="admin-btn"><span></span> Nuevo Evento</a>
+                    <a href="${merchRegister}" class="admin-btn"><span></span> Nueva Merch</a>
+                    <a href="${galeriaRegister}" class="admin-btn"><span></span> Nueva Galería</a>
+                </div>
+            </div>
+        `;
+    } 
+    // PANEL EXCLUSIVO PARA ARTISTAS (NUEVO)
+    else if (usuario.tipoUsuario === 'ARTISTA') {
+        const lanzamientoRegister = "/pages/LanzamientoRegister/lanzamiento-register.html";
+        
+        adminButtonsHTML = `
+            <div class="admin-panel">
+                <p class="admin-title">PANEL DE ARTISTA</p>
+                <div class="admin-grid" style="grid-template-columns: 1fr;"> <a href="${lanzamientoRegister}" class="admin-btn">
+                        <span></span> Nuevo Lanzamiento
                     </a>
                 </div>
             </div>
