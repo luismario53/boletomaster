@@ -8,7 +8,7 @@ const MercanciaController = {
             console.log("👕 Creando merch:", req.body);
             const nuevaMerch = req.body
 
-            nuevaMerch['tipoProducto'] = 'Mercancia'
+            nuevaMerch['TipoProducto'] = 'Mercancia'
             const nuevaMercancia = new Mercancia(nuevaMerch);
             await nuevaMercancia.save();
             

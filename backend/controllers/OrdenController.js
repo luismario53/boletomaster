@@ -1,6 +1,4 @@
 import OrdenDAO from '../dao/OrdenDAO.js'
-import MercanciaDAO from '../dao/MercanciaDAO.js'
-
 import AppError from '../utils/AppError.js'
 import { createOrder, capturePayment } from '../utils/paypal.js'
 
@@ -36,8 +34,6 @@ class OrdenController {
                     fechaPago: new Date()
                 })
 
-                // descontar mercancia
-                await OrdenDAO.descontarInventario(req.query.ordenId)
                 // Redirigir a página de éxito
                 // res.redirect(`${process.env.BASE_URL_FRONTEND}/pago-exitoso?ordenId=${req.query.ordenId}`)
                 res.redirect(`${process.env.BASE_URL_FRONTEND}/principal?ordenId=${req.query.ordenId}`)

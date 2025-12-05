@@ -114,6 +114,7 @@ async function renderizarProducto(idMerch) {
                         : `<p class="stock-ok">En Stock</p>`
                     }
                     <button class="btn-buy">AGREGAR AL CARRITO</button>
+                    <button class="btn-buy2" onclick="crearCompra()">SIMULAR COMPRA</button>
                 </div>
 
                 <div class="description-section">
@@ -220,3 +221,5 @@ const agregarCurrentItem = (data) => {
         descripcion
     }))
 }
+
+const limpiarCurrentItem = () => localStorage.removeItem('current_item')
