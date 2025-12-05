@@ -33,6 +33,7 @@ export class CarritoCardComponent extends HTMLElement {
                             <h3>${this.nombre}</h3>
                             <p class="precio">Precio: $${this.precio}</p>
                             <p class="talla">Talla: ${this.talla}</p>
+                            <p class="talla">Cantidad: ${this.cantidad}</p>
                         </div>
                         
                     </div>

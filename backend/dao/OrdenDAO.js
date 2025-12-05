@@ -9,7 +9,7 @@ import Orden from '../models/Orden.js'
 import Mercancia from '../models/Mercancia.js'
 
 class OrdenDAO {
-    constructor() {}
+    constructor() { }
 
     /**
      * Crea una nueva orden en la base de datos.
@@ -24,9 +24,11 @@ class OrdenDAO {
             const ids = productos.map(producto => producto._id)
             const productosDB = await Mercancia.find({ _id: { $in: ids } });
 
-            const cantidadesProductos = new Map(
-                productos.map(p => [p._id, p.cantidad])
-            );
+            const cantidadesProductos = new Map();
+            productos.forEach(p => {
+                const cantidadActual = cantidadesProductos.get(p._id) || 0;
+                cantidadesProductos.set(p._id, cantidadActual + p.cantidad);
+            });
 
             const ventas = productosDB.map(producto => {
                 const cantidad = cantidadesProductos.get(producto._id.toString())
@@ -54,41 +56,41 @@ class OrdenDAO {
         }
     }
 
-    /**
-     * Agrega uno o varios ítems al detalle de una orden existente.
-     * 
-     * @param {String} idOrden - ID de la orden a modificar.
-     * @param {Array} items - Lista de ítems a agregar con sus precios y cantidades.
-     * @returns {Promise<Object>} Orden actualizada.
-     * @throws {Error} Si no se encuentra la orden o ocurre un error al guardar.
-     */
-    async agregarItemsAVenta(idOrden, items) {
-        try {
-            const orden = await Orden.findById(idOrden)
-            if (!orden) {
-                throw new Error('No se encontró la orden')
-            }
+    // /**
+    //  * Agrega uno o varios ítems al detalle de una orden existente.
+    //  * 
+    //  * @param {String} idOrden - ID de la orden a modificar.
+    //  * @param {Array} items - Lista de ítems a agregar con sus precios y cantidades.
+    //  * @returns {Promise<Object>} Orden actualizada.
+    //  * @throws {Error} Si no se encuentra la orden o ocurre un error al guardar.
+    //  */
+    // async agregarItemsAVenta(idOrden, items) {
+    //     try {
+    //         const orden = await Orden.findById(idOrden)
+    //         if (!orden) {
+    //             throw new Error('No se encontró la orden')
+    //         }
 
-            // Agrega los ítems al detalle
-            orden.ordenDetalle.push(
-                ...items.map(item => ({
-                    tipoProducto: item.tipoProducto,
-                    idProducto: item.idProducto,
-                    precioVenta: item.precioVenta,
-                    cantidad: item.cantidad,
-                    subtotal: item.precioVenta * item.cantidad
-                }))
-            )
+    //         // Agrega los ítems al detalle
+    //         orden.ordenDetalle.push(
+    //             ...items.map(item => ({
+    //                 tipoProducto: item.tipoProducto,
+    //                 idProducto: item.idProducto,
+    //                 precioVenta: item.precioVenta,
+    //                 cantidad: item.cantidad,
+    //                 subtotal: item.precioVenta * item.cantidad
+    //             }))
+    //         )
 
-            // Recalcular totales
-            orden.total = orden.ordenDetalle.reduce((acc, d) => acc + d.subtotal, 0)
-            orden.iva = orden.total * 0.16 // Ejemplo: IVA del 16%
+    //         // Recalcular totales
+    //         orden.total = orden.ordenDetalle.reduce((acc, d) => acc + d.subtotal, 0)
+    //         orden.iva = orden.total * 0.16 // Ejemplo: IVA del 16%
 
-            return await orden.save()
-        } catch (error) {
-            throw new Error(`Error al agregar items a la orden: ${error.message}`)
-        }
-    }
+    //         return await orden.save()
+    //     } catch (error) {
+    //         throw new Error(`Error al agregar items a la orden: ${error.message}`)
+    //     }
+    // }
 
     /**
      * Obtiene todas las órdenes registradas.
@@ -98,8 +100,7 @@ class OrdenDAO {
     async obtenerOrdenes() {
         try {
             return await Orden.find()
-                .populate('idCliente', 'nombre correo')
-                .populate('ordenDetalle.idItem', 'nombre precio')
+                .populate('idCliente')
         } catch (error) {
             throw new Error(`Error al obtener las órdenes: ${error.message}`)
         }
@@ -115,9 +116,43 @@ class OrdenDAO {
         try {
             return await Orden.findById(id)
                 .populate('idCliente', 'nombre correo')
-                .populate('ordenDetalle.idItem', 'nombre precio')
+                .populate('ordenDetalle.idProducto', '_id nombre precio cantidad')
         } catch (error) {
             throw new Error(`Error al obtener la orden: ${error.message}`)
+        }
+    }
+
+    /**
+     * Descuenta el inventario de un producto.
+     * 
+     * @param {String} id - ID de la orden a buscar.
+     * @returns {Promise<Object|null>} Orden encontrada o null si no existe.
+     */
+    async descontarInventario(id) {
+        try {
+            const orden = await Orden.findById(id)
+                .populate('idCliente', 'nombre correo')
+                .populate('ordenDetalle.idProducto', '_id nombre precio cantidad');
+
+            // Usar Promise.all para esperar todas las actualizaciones
+            await Promise.all(
+                orden.ordenDetalle.map(producto =>
+                    Mercancia.findOneAndUpdate(
+                        {
+                            _id: producto.idProducto._id,
+                            stock: { $gte: producto.cantidad }
+                        },
+                        {
+                            $inc: { stock: -producto.cantidad }
+                        }
+                    )
+                )
+            );
+
+            return await orden.save();
+
+        } catch (error) {
+            throw new Error(`Error al descontar inventario: ${error.message}`);
         }
     }
 
