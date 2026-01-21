@@ -114,7 +114,6 @@ async function renderizarProducto(idMerch) {
                         : `<p class="stock-ok">En Stock</p>`
                     }
                     <button class="btn-buy">AGREGAR AL CARRITO</button>
-                    <button class="btn-buy2" onclick="crearCompra()">SIMULAR COMPRA</button>
                 </div>
 
                 <div class="description-section">
@@ -146,7 +145,7 @@ async function renderizarProducto(idMerch) {
             if (!usuarioSesion) {
                 // Si NO hay sesión, mostramos mensaje y detenemos.
                 // Usamos 'confirm' para darles la opción de ir al login o cancelar
-                const irALogin = confirm("🔒 Para agregar productos al carrito necesitas iniciar sesión.\n\n¿Deseas ir a la página de inicio de sesión ahora?");
+                const irALogin = confirm("Para agregar productos al carrito necesitas iniciar sesión.\n\n¿Deseas ir a la página de inicio de sesión ahora?");
                 
                 if (irALogin) {
                     window.location.href = "/pages/Login/login.html";
@@ -162,7 +161,7 @@ async function renderizarProducto(idMerch) {
 
             agregarProductoAlCarrito(tallaSeleccionada)
             // C) Éxito
-            alert(`✅ ¡Producto agregado al carrito!`);
+            alert(`¡Producto agregado al carrito!`);
             // limpiarCurrentItem()
         });
 

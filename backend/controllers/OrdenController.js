@@ -1,120 +1,164 @@
-import OrdenDAO from '../dao/OrdenDAO.js'
-import AppError from '../utils/AppError.js'
-import { createOrder, capturePayment } from '../utils/paypal.js'
+import Orden from '../models/Orden.js';
+import Mercancia from '../models/Mercancia.js';
+import Evento from '../models/Evento.js';
+import AppError from '../utils/AppError.js';
+import * as paypalService from '../utils/paypal.js';
 
-class OrdenController {
-    constructor() {}
+const OrdenController = {
+
+    // ==========================================
+    // 1. PROCESO DE PAGO (PAYPAL)
+    // ==========================================
 
     async crearOrden(req, res, next) {
         try {
+            const { idCliente, productos } = req.body;
+            console.log("🛒 Procesando orden para:", idCliente);
 
-            const nuevaOrden = await OrdenDAO.crearOrden(req.body)
-            const urlAprobacion = await createOrder(nuevaOrden)
+            if (!productos || productos.length === 0) {
+                return next(new AppError('El carrito está vacío', 400));
+            }
+
+            let totalCalculado = 0;
+            const itemsProcesados = [];
+
+            // 1. Calcular precios reales desde la BD
+            for (const item of productos) {
+                let precioReal = 0;
+                let tipo = '';
+
+                if (item.tipoProducto === 'Mercancia') {
+                    const prod = await Mercancia.findById(item._id);
+                    if (!prod) return next(new AppError(`Producto ${item._id} no encontrado`, 404));
+                    precioReal = prod.precio;
+                    tipo = 'Mercancia';
+                } else {
+                    const evento = await Evento.findById(item._id);
+                    if (!evento) return next(new AppError(`Evento ${item._id} no encontrado`, 404));
+                    precioReal = evento.precio;
+                    tipo = 'Boleto';
+                }
+
+                const subtotal = precioReal * item.cantidad;
+                totalCalculado += subtotal;
+
+                itemsProcesados.push({
+                    tipoProducto: tipo, 
+                    idProducto: item._id,
+                    precioVenta: precioReal,
+                    cantidad: item.cantidad,
+                    subtotal: subtotal
+                });
+            }
+
+            console.log("Total a cobrar:", totalCalculado);
+
+            // 2. Crear Orden en Mongo
+            const iva = parseFloat((totalCalculado * 0.16).toFixed(2));
+            
+            const nuevaOrden = new Orden({
+                idCliente: idCliente,
+                fecha: new Date(),
+                total: totalCalculado, 
+                iva: iva,              
+                ordenDetalle: itemsProcesados,
+                estadoPago: 'Pendiente'
+            });
+
+            await nuevaOrden.save();
+
+            // 3. Llamar a PayPal
+            const urlAprobacion = await paypalService.createOrder(nuevaOrden);
 
             res.status(201).json({
-                message: 'Orden creada correctamente',
+                message: 'Orden creada, redirigiendo a PayPal',
                 url: urlAprobacion
-            })
+            });
+
         } catch (error) {
-            next(new AppError(error.message, 400))
+            console.error("Error crearOrden:", error);
+            next(new AppError(error.message, 500));
         }
-    }
+    },
 
     async capturarPago(req, res, next) {
+        // Fallback por si falla la variable de entorno
+        const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+
         try {
-            const { token } = req.query
+            const { token } = req.query; 
             
-            const result = await capturePayment(token)
+            // CORRECCIÓN: Quitamos /src de la ruta
+            if(!token) return res.redirect(`${clientUrl}/pages/Carrito/carrito.html?status=cancel`);
+
+            console.log("💳 Capturando pago:", token);
+
+            const result = await paypalService.capturePayment(token);
 
             if (result.status === 'COMPLETED') {
-                // actualizamos la orden como pagada
-                await OrdenDAO.actualizarOrden(req.query.ordenId, {
-                    estadoPago: 'Pagado',
-                    paypalOrderId: token,
-                    fechaPago: new Date()
-                })
+                const ordenIdInterna = result.purchase_units[0].reference_id;
 
-                // Redirigir a página de éxito
-                // res.redirect(`${process.env.BASE_URL_FRONTEND}/pago-exitoso?ordenId=${req.query.ordenId}`)
-                res.redirect(`${process.env.BASE_URL_FRONTEND}/principal?ordenId=${req.query.ordenId}`)
+                const orden = await Orden.findById(ordenIdInterna);
+                if (orden) {
+                    orden.estadoPago = 'Pagado';
+                    orden.paypalOrderId = token;
+                    await orden.save();
+                }
+
+                // CORRECCIÓN: Quitamos /src
+                res.redirect(`${clientUrl}/pages/Carrito/carrito.html?status=success&orden=${ordenIdInterna}`);
             } else {
-                res.redirect(`${process.env.BASE_URL_FRONTEND}/principal`)
+                // CORRECCIÓN: Quitamos /src
+                res.redirect(`${clientUrl}/pages/Carrito/carrito.html?status=failed`);
             }
         } catch (error) {
-            console.error('Error capturando pago:', error)
-            res.redirect(`${process.env.BASE_URL_FRONTEND}/pago-fallido`)
+            console.error('Error capturando pago:', error);
+            // CORRECCIÓN: Quitamos /src
+            res.redirect(`${clientUrl}/pages/Carrito/carrito.html?status=error`);
         }
-    }
+    },
 
-    // async agregarItemsAVenta(req, res, next) {
-    //     try {
-    //         const { id } = req.params
-    //         const { items } = req.body
+    async cancelarPago(req, res) {
+         const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+         // CORRECCIÓN: Quitamos /src
+         res.redirect(`${clientUrl}/pages/Carrito/carrito.html?status=cancel`);
+    },
 
-    //         if (!items || !Array.isArray(items) || items.length === 0) {
-    //             throw new AppError('Debes enviar al menos un item válido', 400)
-    //         }
+    // ==========================================
+    // 2. GESTIÓN DE ÓRDENES (ADMINISTRADOR)
+    // ==========================================
 
-    //         const ordenActualizada = await OrdenDAO.agregarItemsAVenta(id, items)
-
-    //         res.status(200).json({
-    //             message: 'Ítems agregados correctamente a la orden',
-    //             data: ordenActualizada
-    //         })
-    //     } catch (error) {
-    //         next(error instanceof AppError ? error : new AppError(error.message, 400))
-    //     }
-    // }
-
+    // Esta es la función que te faltaba y causaba el error
     async obtenerOrdenes(req, res, next) {
         try {
-            const ordenes = await OrdenDAO.obtenerOrdenes()
-            res.status(200).json(ordenes)
+            const ordenes = await Orden.find()
+                .populate('idCliente', 'nombre email')
+                .sort({ fecha: -1 });
+            res.status(200).json(ordenes);
         } catch (error) {
-            next(new AppError(error.message, 500))
+            next(new AppError(error.message, 500));
         }
-    }
+    },
 
     async obtenerOrdenPorId(req, res, next) {
         try {
-            const orden = await OrdenDAO.obtenerOrdenPorId(req.params.id)
-            if (!orden) {
-                return next(new AppError('Orden no encontrada', 404))
-            }
-            res.status(200).json(orden)
+            const orden = await Orden.findById(req.params.id).populate('idCliente', 'nombre email');
+            if (!orden) return next(new AppError('Orden no encontrada', 404));
+            res.status(200).json(orden);
         } catch (error) {
-            next(new AppError(error.message, 400))
+            next(new AppError(error.message, 400));
         }
-    }
-
-    async actualizarOrden(req, res, next) {
-        try {
-            const ordenActualizada = await OrdenDAO.actualizarOrden(req.params.id, req.body)
-            if (!ordenActualizada) {
-                return next(new AppError('Orden no encontrada', 404))
-            }
-            res.status(200).json({
-                message: 'Orden actualizada correctamente',
-                data: ordenActualizada
-            })
-        } catch (error) {
-            next(new AppError(error.message, 400))
-        }
-    }
+    },
 
     async eliminarOrden(req, res, next) {
         try {
-            const eliminada = await OrdenDAO.eliminarOrden(req.params.id)
-            if (!eliminada) {
-                return next(new AppError('Orden no encontrada', 404))
-            }
-            res.status(200).json({
-                message: 'Orden eliminada correctamente'
-            })
+            const orden = await Orden.findByIdAndDelete(req.params.id);
+            if (!orden) return next(new AppError('Orden no encontrada', 404));
+            res.status(200).json({ message: 'Orden eliminada' });
         } catch (error) {
-            next(new AppError(error.message, 400))
+            next(new AppError(error.message, 400));
         }
     }
-}
+};
 
-export default new OrdenController()
+export default OrdenController;

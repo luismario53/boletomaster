@@ -1,19 +1,20 @@
-import express from 'express'
-import OrdenController from '../controllers/OrdenController.js'
-import { verificarAuth, verificarRol } from '../middleware/auth.js';
+import express from 'express';
+import OrdenController from '../controllers/OrdenController.js';
+import { verificarAuth } from '../middleware/auth.js';
 
-const router = express.Router()
+const router = express.Router();
 
-// callbacks de PayPal
-router.get('/paypal/capture', OrdenController.capturarPago)
+// 1. CREAR ORDEN (Cliente logueado)
+router.post('/', verificarAuth, OrdenController.crearOrden);
 
+// 2. CALLBACKS DE PAYPAL (Públicos)
+router.get('/paypal/capture', OrdenController.capturarPago);
+router.get('/paypal/cancel', OrdenController.cancelarPago);
 
-router.post('/', verificarAuth, OrdenController.crearOrden)
-// router.post('/:id/items', OrdenController.agregarItemsAVenta)
-router.get('/', OrdenController.obtenerOrdenes)
-router.get('/:id', OrdenController.obtenerOrdenPorId)
-router.put('/:id', OrdenController.actualizarOrden)
-router.delete('/:id', OrdenController.eliminarOrden)
+// 3. GESTIÓN (Admin/Organizador)
+// Si OrdenController.obtenerOrdenes no existe en el archivo anterior, esta línea da el error que tenías.
+router.get('/', verificarAuth, OrdenController.obtenerOrdenes);
+router.get('/:id', verificarAuth, OrdenController.obtenerOrdenPorId);
+router.delete('/:id', verificarAuth, OrdenController.eliminarOrden);
 
-
-export default router
+export default router;

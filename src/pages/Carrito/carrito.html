@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito | Sonico Lirio</title>
     <link rel="stylesheet" href="styles.css">
-</head>
+    </head>
 <body>
     <header-info></header-info>
 
@@ -14,11 +14,17 @@
         
         <div class="merch-list"></div>
 
-        <button class="paypal-button" onclick="crearCompra()">
-            <p>
-                <span class="pay">Pay</span><span class="pal">Pal</span>
-            </p>
-        </button>
+        <div class="actions-container">
+            <button class="paypal-button" onclick="crearCompra()">
+                <p>
+                    <span class="pay">Pay</span><span class="pal">Pal</span>
+                </p>
+            </button>
+            
+            <button onclick="limpiarCarritoManual()" style="margin-top:10px; background:none; border:none; color:white; text-decoration:underline; cursor:pointer;">
+                Vaciar Carrito
+            </button>
+        </div>
     </main>
 
     <footer-info></footer-info>
