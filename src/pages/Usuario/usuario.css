@@ -1,0 +1,239 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0f0f10; /* Fondo oscuro */
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: radial-gradient(circle at center, #1a1b20 0%, #0f0f10 100%); /* Fondo con leve viñeta */
+}
+
+/* --- TARJETA PRINCIPAL --- */
+.profile-card {
+    background-color: #1a1b20;
+    width: 100%;
+    max-width: 380px; /* Un poco más angosta para elegancia */
+    border-radius: 24px; /* Bordes más redondeados */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6); /* Sombra profunda */
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05); /* Borde sutil */
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px); /* Flota un poco al pasar el mouse */
+    border-color: rgba(248, 214, 44, 0.3); /* Brillo amarillo sutil en el borde */
+}
+
+/* --- CABECERA (BANNER) --- */
+.profile-header {
+    height: 140px;
+    background: linear-gradient(135deg, #5E4AA3 0%, #735DC9 50%, #F8D62C 100%);
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+/* ETIQUETA DE ROL (Cliente/Artista) */
+.badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    /*backdrop-filter: blur(5px);*/
+    color: #F8D62C;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid rgba(248, 214, 44, 0.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* FOTO DE PERFIL */
+.big-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #1a1b20; /* Mismo color que el fondo de la tarjeta */
+    position: absolute;
+    bottom: -55px; /* Mitad adentro, mitad afuera */
+    background: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.profile-card:hover .big-avatar {
+    transform: scale(1.05); /* Zoom al pasar el mouse por la tarjeta */
+}
+
+/* --- CUERPO DEL PERFIL --- */
+.profile-body {
+    padding: 65px 30px 40px 30px; /* Padding top alto para compensar la foto */
+}
+
+.user-name {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.user-email {
+    color: #888;
+    margin: 5px 0 25px 0;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+/* CAJA DE DATOS */
+.data-group {
+    background: rgba(255, 255, 255, 0.03); /* Fondo casi invisible */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.data-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.data-item strong {
+    color: #aaa;
+    font-weight: 600;
+}
+
+.data-item span {
+    color: #fff;
+    font-weight: 500;
+}
+
+/* LINEA DIVISORIA (Opcional, la oculto porque la caja data-group ya separa bien) */
+.divider {
+    display: none; 
+}
+
+/* BOTÓN DE CERRAR SESIÓN */
+.logout-btn {
+    background: transparent;
+    color: #ff5b5b; /* Rojo un poco más brillante */
+    border: 2px solid rgba(255, 91, 91, 0.3);
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.logout-btn:hover {
+    background: #ff5b5b;
+    color: white;
+    border-color: #ff5b5b;
+    box-shadow: 0 5px 15px rgba(255, 91, 91, 0.3);
+}
+
+/* Icono simulado para el botón (puedes agregar un <img src> en el HTML si prefieres) */
+.logout-btn::before {
+    content: "➜"; /* Icono de salida simple */
+    font-size: 1.1rem;
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+.logout-btn:hover::before {
+    transform: translateX(3px);
+}
+
+/* MOSTRAR EL DIVIDER AHORA SÍ */
+.divider {
+    display: block; /* Lo mostramos para separar el panel de admin del logout */
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 25px 0;
+}
+
+/* --- PANEL DE ADMINISTRACIÓN --- */
+.admin-panel {
+    margin-top: 25px;
+    text-align: left;
+}
+
+.admin-title {
+    font-size: 0.8rem;
+    color: #F8D62C; /* Amarillo */
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas */
+    gap: 10px;
+}
+
+.admin-btn {
+    background-color: rgba(115, 93, 201, 0.2); /* Morado muy transparente */
+    border: 1px solid #735DC9;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+/* El último botón (Merch) que ocupe todo el ancho si queda solo
+.admin-btn:last-child:nth-child(odd) {
+    grid-column: span 2;
+}*/
+
+.admin-btn:hover {
+    background-color: #735DC9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(115, 93, 201, 0.3);
+}
+
+.admin-btn span {
+    font-size: 1.2rem; /* Icono un poco más grande */
+}

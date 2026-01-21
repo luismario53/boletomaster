@@ -1,0 +1,67 @@
+:host {
+    display: block;
+    /* Misma altura que lanzamiento */
+    height: 300px; 
+    /* Importante: para que no se estire en el contenedor flex */
+    flex-shrink: 0; 
+}
+
+.card {
+    display: flex;
+    background-color: #1a1b20; /* Color oscuro base */
+    color: white;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer; /* O default si no lleva link */
+    
+    /* DIMENSIONES EXACTAS DE LANZAMIENTO */
+    width: 240px;
+    height: 100%;
+    
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.info-section {
+    width: 240px; /* Ancho fijo */
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.cover {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.text-data {
+    text-align: center; /* Centramos el nombre */
+}
+
+.text-data h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
+}
+
+/* Agregar al inicio de artist-card.css */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+/* ... resto del CSS ... */

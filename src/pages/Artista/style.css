@@ -1,0 +1,166 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0f0f10;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    width: 100%;
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 2rem;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.margin-top-large {
+    margin-top: 80px;
+}
+
+.hero-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+.hero-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.4); 
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.artist-name-hero {
+    font-size: 4rem;
+    top: 30%;
+    text-transform: uppercase;
+    margin: 0 0 20px 0;
+    letter-spacing: 3px;
+    font-weight: 800;
+    color: #735DC9;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero-socials {
+    display: flex;
+    gap: 20px;
+}
+
+.hero-socials img {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.2s;
+}
+
+.hero-socials img:hover {
+    transform: scale(1.1);
+}
+
+.bio-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 80px auto;
+    /* background-color: #735DC9; 
+    color: #0f0f10; /* texto oscuro sobre fondo claro */
+}
+
+.bio-left-col {
+    flex: 1;
+}
+
+.bio-left-col img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bio-right-col {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+}
+
+.bio-text-content h3 {
+    color: #735DC9;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    margin-top: 0;
+}
+
+.bio-text-content p {
+    line-height: 1.6;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.bio-extra-icons {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.bio-extra-icons img {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .artist-name-hero {
+        font-size: 2.5rem;
+    }
+    .bio-container {
+        flex-direction: column;
+    }
+    .bio-left-col, .bio-right-col {
+        flex: auto;
+        width: 100%;
+    }
+    .bio-right-col {
+        text-align: center;
+        padding: 30px 20px;
+    }
+    .bio-extra-icons {
+        justify-content: center;
+    }
+}

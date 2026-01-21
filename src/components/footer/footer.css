@@ -1,0 +1,54 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.main-footer {
+    background-color: #F8D62C;
+    padding-top: 50px;
+    padding-bottom: 40px;
+    text-align: center;
+    position: relative;
+}
+
+/* difunimado ahora si */
+.main-footer::before {
+    content: '';
+    position: absolute;
+    top: -50px; 
+    left: 0;
+    width: 100%;
+    height: 51px;
+    
+    background: linear-gradient(to bottom, rgba(248, 214, 44, 0) 0%, #F8D62C 100%);
+    pointer-events: none; 
+    z-index: 1; 
+}
+
+.nombre {
+    color: #735DC9;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0 0 20px 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.social {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.social img {
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.social img:hover {
+    transform: scale(1.2) rotate(5deg);
+}

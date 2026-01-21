@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Galería | Panel Admin</title>
+    
+    <link rel="stylesheet" href="../Login/login.css">
+    <link rel="stylesheet" href="galeria-register.css">
+</head>
+<body>
+    <header-info></header-info>
+
+    <main class="main-content">
+        <div class="auth-card wide-card">
+            <h1 class="auth-title">NUEVO ÁLBUM</h1>
+            <p class="auth-subtitle">Publicar fotos de un evento pasado</p>
+
+            <form id="gallery-form">
+                
+                <div class="form-section">
+                    <h3>Datos del Álbum</h3>
+                    
+                    <div class="input-group">
+                        <label for="evento">Nombre del Evento / Álbum</label>
+                        <input type="text" id="evento" required placeholder="Ej: Festival Sonico 2024">
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label for="fecha">Fecha del Evento</label>
+                            <input type="date" id="fecha" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="descripcion">Descripción Corta</label>
+                            <input type="text" id="descripcion" placeholder="Lo mejor de la noche...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Fotografías</h3>
+                    <p style="color:#888; font-size:0.9rem; margin-bottom:15px;">Agrega las URLs de todas las fotos que quieras.</p>
+                    
+                    <div id="photos-container">
+                        <div class="input-group photo-row">
+                            <input type="text" class="photo-input" placeholder="URL de la imagen..." required>
+                        </div>
+                    </div>
+
+                    <button type="button" id="add-photo-btn" class="action-btn">
+                        + AGREGAR OTRA FOTO
+                    </button>
+                </div>
+
+                <button type="submit" class="btn-auth">PUBLICAR GALERÍA</button>
+            </form>
+        </div>
+    </main>
+
+    <footer-info></footer-info>
+    <script type="module" src="galeria-register.js"></script>
+</body>
+</html>

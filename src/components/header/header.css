@@ -1,0 +1,108 @@
+/* HEADER PRINCIPAL */
+.main-header {
+    background-color: #F8D62C; /* Fondo Amarillo del Header */
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between; /* Logo a la izq, Todo lo demás a la der */
+    align-items: center;
+}
+
+.logo {
+    height: 60px;
+    transition: transform 0.3s;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+/* --- CONTENEDOR DERECHO (Menú + Auth) --- */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Espacio entre el menú de texto y el botón de login */
+}
+
+/* --- MENÚ DE NAVEGACIÓN --- */
+.nav-menu {
+    display: flex;
+    gap: 25px; /* Espacio entre links */
+}
+
+.nav-menu a {
+    text-decoration: none;
+    font-weight: 800; /* Letra gruesa */
+    color: #735DC9;   /* Letras moradas */
+    font-size: 18px;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+}
+
+.nav-menu a:hover {
+    color: #5E4AA3; /* Un morado más oscuro al pasar el mouse */
+    /*text-decoration: underline;*/
+}
+
+/* --- SECCIÓN DE AUTENTICACIÓN --- */
+.auth-section {
+    display: flex;
+    align-items: center;
+}
+
+/* BOTÓN DE INICIAR SESIÓN (Tus colores) */
+.login-btn {
+    text-decoration: none;
+    background-color: #735DC9; /* Fondo Morado */
+    color: #F8D62C;            /* Letras Amarillas */
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 25px;        /* Botón más gordito */
+    border-radius: 30px;       /* Bordes redondos */
+    border: 2px solid #735DC9; /* Borde del mismo color */
+    transition: all 0.3s ease;
+    white-space: nowrap;       /* Que no se rompa el texto */
+    box-shadow: 0 4px 10px rgba(115, 93, 201, 0.3); /* Sombra morada suave */
+}
+
+.login-btn:hover {
+    background-color: transparent; /* Fondo transparente al hover */
+    color: #735DC9;                /* Letras moradas */
+    transform: translateY(-2px);   /* Se eleva un poco */
+}
+
+/* FOTO DE USUARIO (Cuando hay sesión) */
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #735DC9;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.user-avatar:hover {
+    transform: scale(1.1);
+    border-color: white;
+}
+
+/* RESPONSIVE (Celular) */
+@media (max-width: 900px) {
+    .main-header {
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .header-right {
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .nav-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+}

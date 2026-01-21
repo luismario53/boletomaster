@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Lanzamiento | Panel Artista</title>
+    <link rel="stylesheet" href="../Login/login.css"> <link rel="stylesheet" href="../EventoRegister/evento-register.css"> </head>
+<body>
+    <header-info></header-info>
+
+    <main class="main-content">
+        <div class="auth-card wide-card">
+            <h1 class="auth-title">NUEVO LANZAMIENTO</h1>
+            <p class="auth-subtitle">Sube tu nueva música a la plataforma</p>
+
+            <form id="lanzamiento-form">
+                <div class="form-section">
+                    <h3>Detalles del Disco / Sencillo</h3>
+                    
+                    <div class="input-group">
+                        <label for="titulo">Título de la Canción o Álbum</label>
+                        <input type="text" id="titulo" required placeholder="Ej: Paranoia">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="imagen">Portada del Álbum (URL)</label>
+                        <input type="text" id="imagen" required placeholder="/src/assets/lanzamientos/..." >
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🔗 Plataformas</h3>
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label>Link de Spotify</label>
+                            <input type="text" id="spotify" placeholder="https://open.spotify.com/...">
+                        </div>
+                        <div class="input-group">
+                            <label>Link de YouTube</label>
+                            <input type="text" id="youtube" placeholder="https://youtube.com/...">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth">PUBLICAR LANZAMIENTO</button>
+            </form>
+        </div>
+    </main>
+
+    <footer-info></footer-info>
+    <script type="module" src="lanzamiento-register.js"></script>
+</body>
+</html>

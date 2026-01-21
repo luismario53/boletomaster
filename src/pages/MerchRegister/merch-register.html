@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Merch | Panel Admin</title>
+    
+    <link rel="stylesheet" href="../Login/login.css">
+    <link rel="stylesheet" href="merch-register.css">
+</head>
+<body>
+    <header-info></header-info>
+
+    <main class="main-content">
+        <div class="auth-card wide-card">
+            <h1 class="auth-title">NUEVA MERCANCÍA</h1>
+            <p class="auth-subtitle">Registrar productos para la tienda</p>
+
+            <form id="merch-form">
+                
+                <div class="form-section">
+                    <h3>Asignación</h3>
+                    <div class="input-group">
+                        <label for="artistaSelector">¿A qué Artista pertenece este producto?</label>
+                        <select id="artistaSelector" required>
+                            <option value="" disabled selected>Selecciona un artista...</option>
+                            </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Detalles del Producto</h3>
+                    
+                    <div class="input-group">
+                        <label for="nombre">Nombre del Producto</label>
+                        <input type="text" id="nombre" required placeholder="Ej: Camiseta Tour 2025">
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label for="precio">Precio (MXN)</label>
+                            <input type="number" id="precio" required placeholder="350">
+                        </div>
+                        <div class="input-group">
+                            <label for="stock">Inventario Inicial</label>
+                            <input type="number" id="stock" required placeholder="50">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="material">Material / Descripción Breve</label>
+                        <input type="text" id="material" placeholder="Ej: 100% Algodón Heavy Weight">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Tallas Disponibles</h3>
+                    <div class="tallas-container">
+                        <label class="checkbox-label"><input type="checkbox" value="XS" class="talla-check"> XS</label>
+                        <label class="checkbox-label"><input type="checkbox" value="S" class="talla-check"> S</label>
+                        <label class="checkbox-label"><input type="checkbox" value="M" class="talla-check" checked> M</label>
+                        <label class="checkbox-label"><input type="checkbox" value="L" class="talla-check" checked> L</label>
+                        <label class="checkbox-label"><input type="checkbox" value="XL" class="talla-check"> XL</label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Fotos del Producto</h3>
+                    <div class="input-group">
+                        <label>URLs de Imágenes</label>
+                        <input type="text" class="img-input" placeholder="Vista Frontal (Obligatorio)" required>
+                        <input type="text" class="img-input" style="margin-top: 10px;" placeholder="Vista Trasera (Opcional)">
+                        <input type="text" class="img-input" style="margin-top: 10px;" placeholder="Detalle (Opcional)">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="descripcion">Descripción Larga</label>
+                        <textarea id="descripcion" rows="4" placeholder="Detalles de diseño, colección, etc."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth">REGISTRAR PRODUCTO</button>
+            </form>
+        </div>
+    </main>
+
+    <footer-info></footer-info>
+    <script type="module" src="merch-register.js"></script>
+</body>
+</html>

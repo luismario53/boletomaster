@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Evento | Panel Admin</title>
+    
+    <link rel="stylesheet" href="../Login/login.css">
+    <link rel="stylesheet" href="evento-register.css">
+</head>
+<body>
+    <header-info></header-info>
+
+    <main class="main-content">
+        <div class="auth-card wide-card">
+            <h1 class="auth-title">NUEVO EVENTO</h1>
+            <p class="auth-subtitle">Publicar un nuevo concierto o festival</p>
+
+            <form id="evento-form">
+                
+                <div class="form-section">
+                    <h3>Información Principal</h3>
+                    
+                    <div class="input-group">
+                        <label for="titulo">Nombre del Evento</label>
+                        <input type="text" id="titulo" required placeholder="Ej: Festival Sonico 2025">
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" id="fecha" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="hora">Hora de Inicio</label>
+                            <input type="time" id="hora" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Ubicación y Venta</h3>
+                    
+                    <div class="input-group">
+                        <label for="lugar">Nombre del Lugar (Venue)</label>
+                        <input type="text" id="lugar" required placeholder="Ej: Foro Indie Rocks">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="direccion">Dirección Completa</label>
+                        <input type="text" id="direccion" required placeholder="Calle, Número, Colonia, Ciudad...">
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label for="precio">Precio Boleto (MXN)</label>
+                            <input type="number" id="precio" required placeholder="0 para gratis" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="stock">Boletos Disponibles</label>
+                            <input type="number" id="stock" required placeholder="Ej: 100" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Multimedia y Descripción</h3>
+                    
+                    <div class="input-group">
+                        <label for="descripcion">Descripción del Evento</label>
+                        <textarea id="descripcion" rows="4" placeholder="Detalles, line-up, restricciones..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Imágenes del Evento (URL)</label>
+                        <input type="text" class="img-input" placeholder="URL Poster Principal (Obligatorio)" required>
+                        <input type="text" class="img-input" style="margin-top: 10px;" placeholder="URL Foto Extra 1 (Opcional)">
+                        <input type="text" class="img-input" style="margin-top: 10px;" placeholder="URL Foto Extra 2 (Opcional)">
+                    </div>
+                </div>
+
+                <div class="form-section" style="margin-top: 20px;">
+                    <h3>Lineup (Selecciona los artistas)</h3>
+                    
+                    <div id="artistas-container" class="checkbox-grid">
+                        <p style="color:#aaa">Cargando artistas...</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth">PUBLICAR EVENTO</button>
+            </form>
+        </div>
+    </main>
+
+    <footer-info></footer-info>
+    <script type="module" src="evento-register.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+:host {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card {
+    display: flex;
+    background-color: #1a1b20;
+    border-radius: 12px;
+    overflow: hidden;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, border-color 0.2s;
+    border: 1px solid transparent;
+    height: 160px;
+}
+
+.card:hover {
+    transform: translateX(5px);
+    /* border-color: #F8D62C; no se si me convence esto*/
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+
+.img-container {
+    padding: 0.5rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.4rem;
+    color: #F8D62C;
+    text-transform: uppercase;
+}
+
+.precio, .talla {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.price-action {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.btn-tickets {
+    background-color: #735DC9;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    /*transition: background 0.3s;*/
+    display: inline-block;
+}
+
+.card:hover .btn-tickets {
+    background-color: #5E4AA3;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .card {
+        flex-direction: column;
+        height: auto;
+    }
+    .img-container {
+        width: 100%;
+        height: 150px;
+    }
+    .info-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    .price-action {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}

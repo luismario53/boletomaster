@@ -1,0 +1,186 @@
+:host {
+    display: block;
+    height: 300px; 
+}
+
+/* --- cerrada --- */
+.card {
+    display: flex;
+    background-color: #1a1b20;
+    color: white;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    
+    width: 240px;
+    height: 100%;
+    
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+/* --- expandida --- */
+.card.expanded {
+    width: 480px; 
+}
+
+.info-section {
+    width: 240px;
+    flex-shrink: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.cover {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.text-data h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.text-data p {
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.platforms-section {
+    width: 0;
+    opacity: 0;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    padding-top: 30px;
+    box-sizing: border-box;
+
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                opacity 0.3s ease-in-out;
+    transition-delay: 0s, 0.1s;
+}
+
+/* tarjeta expandida */
+.card.expanded .platforms-section {
+    width: 240px;
+    opacity: 1;
+    padding-right: 20px;
+    transition-delay: 0s, 0.1s;
+}
+
+.platforms-section h4 {
+    margin: 0 0 20px 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.icons-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.platform-link img {
+    width: 45px; /* tamaño de iconos */
+    height: 45px;
+    transition: transform 0.2s ease;
+}
+
+.platform-link img:hover {
+    transform: scale(1.15);
+}
+
+.lanzamientos-section {
+    background: #735DC9;
+    background: linear-gradient(135deg, #735DC9 0%, #5E4AA3 100%);
+    padding: 60px 20px;
+    color: white;
+}
+
+.media-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-start; 
+}
+
+.releases-column {
+    flex: 2;
+    min-width: 300px;
+}
+
+.releases-column h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-align: left;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.lanzamientos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.video-column {
+    flex: 1;
+    min-width: 300px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.video-column h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #F8D62C;
+}
+
+/* Esto si se lo tuve que pedir a chatGPT porque ni como hacerlo */
+/* AJUSTES PARA MOVIL */
+@media (max-width: 768px) {
+    .media-grid {
+        flex-direction: column; /* Fuerza columna vertical */
+    }
+    
+    .releases-column, .video-column {
+        width: 100%; /* Ocupan todo el ancho */
+        padding: 0;
+        background: transparent; /* Quitamos fondo en móvil si prefieres */
+    }
+
+    .releases-column h2, .video-column h2 {
+        text-align: center; /* Centramos títulos en móvil */
+        display: block;
+    }
+    
+    .lanzamientos-container {
+        align-items: center; /* Centrar tarjetas */
+    }
+}

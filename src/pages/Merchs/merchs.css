@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0f0f10; /* Fondo oscuro */
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    width: 100%;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+/* TÍTULO DE LA PÁGINA */
+.page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #F8D62C; /* Amarillo de la marca */
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ESTILO DEL GRID DE PRODUCTOS 
+   (Copia exacta de la lógica .flex-container del perfil de artista)
+*/
+.merch-grid {
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    gap: 80px; /* Espacio entre tarjetas */
+    flex-wrap: wrap; /* Para que bajen si no caben */
+    max-width: 1200px;
+    margin: 0 auto; /* Centrar el bloque en la pantalla */
+    width: 100%;
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Artista | Panel Admin</title>
+    <link rel="stylesheet" href="../Login/login.css">
+    <link rel="stylesheet" href="artista-register.css">
+</head>
+<body>
+    <header-info></header-info>
+
+    <main class="main-content">
+        <div class="auth-card wide-card">
+            <h1 class="auth-title">NUEVO ARTISTA</h1>
+            <p class="auth-subtitle">Registrar banda o solista en la plataforma</p>
+
+            <form id="artist-form">
+                
+                <div class="form-section">
+                    <h3>Datos de Cuenta</h3>
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label for="nombre">Nombre Artístico</label>
+                            <input type="text" id="nombre" required placeholder="Ej: Mextasis">
+                        </div>
+                        <div class="input-group">
+                            <label for="email">Correo Electrónico</label>
+                            <input type="email" id="email" required placeholder="contacto@banda.com">
+                        </div>
+                    </div>
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label for="password">Contraseña Temporal</label>
+                            <input type="password" id="password" required placeholder="••••••">
+                        </div>
+                        <div class="input-group">
+                            <label for="telefono">Teléfono de Contacto</label>
+                            <input type="tel" id="telefono" required placeholder="55 1234 5678">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Perfil Público</h3>
+                    
+                    <div class="input-group">
+                        <label for="biografia">Biografía (Máx 1000 caracteres)</label>
+                        <textarea id="biografia" rows="5" placeholder="Historia de la banda, origen, género..."></textarea>
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label for="imgPerfil">Foto de Perfil (URL)</label>
+                            <input type="text" id="imgPerfil" placeholder="/assets/artistas/...">
+                        </div>
+                        <div class="input-group">
+                            <label for="imgBanner">Foto de Portada (URL)</label>
+                            <input type="text" id="imgBanner" placeholder="/assets/banners/...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Redes Sociales</h3>
+                    <div class="grid-2-col">
+                        <div class="input-group">
+                            <label>Instagram</label>
+                            <input type="url" id="instagram" placeholder="https://instagram.com/...">
+                        </div>
+                        <div class="input-group">
+                            <label>Spotify</label>
+                            <input type="url" id="spotify" placeholder="https://open.spotify.com/...">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth">REGISTRAR ARTISTA</button>
+            </form>
+        </div>
+    </main>
+
+    <footer-info></footer-info>
+    <script type="module" src="artista-register.js"></script>
+</body>
+</html>
